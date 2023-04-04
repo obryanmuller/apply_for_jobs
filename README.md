@@ -54,6 +54,15 @@ Essa documentação pode ser entregue em um arquivo pdf ou como parte da documen
 
 Faça um Fork desse repositório, Crie uma branch com seu nome (ex: application/jose_silva). 
 
+Selecione uma das linguagens abaixo para implementar o backend do projeto:
+- Python
+- C (e suas variações)
+- Golang
+
+Selecione um dos frameworks abaixo para implementar o frontend do projeto:
+- ReactJC
+- AngularJS
+
 Envie um PR nesse repositorio do GitHub contendo <strong>as implementações</strong> do projeto com base na arquitetura descrita que você desenvolveu do sistema (Queremos avaliar sua lógica de programação e estruturação do código). 
 
 Para testar as implementações de seu projeto antes de enviar, recomendamos o uso do free tier das nuvens públicas ou projetos que emulem localmente tais nuvens como o localstack (https://github.com/localstack/localstack).

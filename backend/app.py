@@ -1,39 +1,43 @@
-import os
-import boto3
-import secrets
-import string
-import uuid
+import pwd_repository
+import random_pass_generator
 import time
 from flask import Flask, jsonify, make_response, request
 
 app = Flask(__name__)
 
 
-dynamodb_client = boto3.client('dynamodb')
-
-if os.environ.get('IS_OFFLINE'):
-    dynamodb_client = boto3.client(
-        'dynamodb', region_name='localhost', endpoint_url='http://localhost:8000'
-    )
-
-
-PWD_TABLE = os.environ['PWD_TABLE']
-
-
 @app.route('/pwd/<string:pwd_id>')
 def get_user(pwd_id):
-    result = dynamodb_client.get_item(
-        TableName=PWD_TABLE, Key={'pwdId': {'S': pwd_id}}
-    )
+    result = pwd_repository.get_by_pwd_id(pwd_id)
     item = result.get('Item')
+
     if not item:
-        return jsonify({'error': 'Could not find user with provided "pwdId"'}), 404
+        return jsonify({'error': 'Could not find pass with provided "pwdId"'}), 404
+
+    expiration_date = item.get('expirationDate').get('N')
+    now = int(time.time())
+
+    if now > int(expiration_date):
+        pwd_repository.delete_by_pwd_id(pwd_id)
+        return jsonify({'error': 'password expired'}), 412
+
+    views_left = int(item.get('viewCount').get('N')) - 1
+
+    if (views_left < 0):
+        pwd_repository.delete_by_pwd_id(pwd_id)
+        return jsonify({'error': 'no views left'}), 412
+
+    if (views_left == 0):
+        pwd_repository.delete_by_pwd_id(pwd_id)
+    else:
+        pwd_repository.decrease_count_view(pwd_id, views_left)
 
     return jsonify(
         {
             'pwd_id': item.get('pwdId').get('S'),
-            'pwd': item.get('name').get('S'),
-            'view_count': item.get('viewCount').get('N'),
+            'pwd': item.get('pwd').get('S'),
+            'view_count': views_left,
+            'expiration_date': expiration_date,
         }
     )
 
@@ -47,38 +51,16 @@ def get_pwd():
     pass_view_limit = request.json.get('pass_view_limit')
     expiration_in_seconds = request.json.get('expiration_in_seconds')
 
-    alphabet = ''
-
-    if use_letters:
-        letters = string.ascii_letters
-        alphabet += letters
-    if use_digits:
-        digits = string.digits
-        alphabet += digits
-    if use_punctuation:
-        punctuation = string.punctuation
-        alphabet += punctuation
-
-    pwd = ''
-    for i in range(pass_length):
-        pwd += ''.join(secrets.choice(alphabet))
-
-    pwd_id = str(uuid.uuid4())
+    pwd = random_pass_generator.generate(
+        use_letters, use_digits, use_punctuation, pass_length)
 
     if not use_letters or not use_digits or not use_punctuation or not expiration_in_seconds:
         return jsonify({'error': 'Please provide "use_letters", "use_digits", "use_punctuation" and "expiration_in_seconds"'}), 400
 
-    dynamodb_client.put_item(
-        TableName=PWD_TABLE,
-        Item={
-            'pwdId': {'S': pwd_id},
-            'pwd': {'S': pwd},
-            'viewCount': {'N': str(pass_view_limit)},
-            'expiration_date': {'N': str(expiration_in_seconds + int(time.time()))}
-        }
-    )
+    pwd_id = pwd_repository.save_new_pwd(
+        pwd, pass_view_limit, expiration_in_seconds)
 
-    return jsonify({'userId': pwd_id, 'name': pwd})
+    return jsonify({'pwd_id': pwd_id})
 
 
 @app.errorhandler(404)

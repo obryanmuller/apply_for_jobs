@@ -2,6 +2,9 @@ import pwd_repository
 import random_pass_generator
 import time
 from flask import Flask, jsonify, make_response, request
+from jsonschema import validate
+import pwd_schemas
+import sended_password_validation
 
 app = Flask(__name__)
 
@@ -44,18 +47,31 @@ def get_user(pwd_id):
 
 @app.route('/pwd', methods=['POST'])
 def get_pwd():
-    use_letters = request.json.get('use_letters')
-    use_digits = request.json.get('use_digits')
-    use_punctuation = request.json.get('use_punctuation')
-    pass_length = request.json.get('pass_length')
-    pass_view_limit = request.json.get('pass_view_limit')
-    expiration_in_seconds = request.json.get('expiration_in_seconds')
+    data = request.get_json()
 
-    pwd = random_pass_generator.generate(
-        use_letters, use_digits, use_punctuation, pass_length)
+    try:
+        validate(data, pwd_schemas.save_pwd_schema)
+    except Exception as e:
+        return jsonify({'error': f'Erro de validação: {e.message}'}), 400
 
-    if not use_letters or not use_digits or not use_punctuation or not expiration_in_seconds:
-        return jsonify({'error': 'Please provide "use_letters", "use_digits", "use_punctuation" and "expiration_in_seconds"'}), 400
+    use_letters = data.get('use_letters')
+    use_digits = data.get('use_digits')
+    use_punctuation = data.get('use_punctuation')
+    pass_length = data.get('pass_length')
+    pass_view_limit = data.get('pass_view_limit')
+    expiration_in_seconds = data.get('expiration_in_seconds')
+    sended_password = data.get('sended_password')
+
+    if sended_password:
+        is_valid_password = sended_password_validation.validate_password(
+            use_letters, use_digits, use_punctuation, pass_length, sended_password)
+        if not is_valid_password:
+            return jsonify({'error': 'weak password'}), 400
+
+        pwd = sended_password
+    else:
+        pwd = random_pass_generator.generate(
+            use_letters, use_digits, use_punctuation, pass_length)
 
     pwd_id = pwd_repository.save_new_pwd(
         pwd, pass_view_limit, expiration_in_seconds)

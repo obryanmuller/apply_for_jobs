@@ -1,3 +1,4 @@
+import crypto
 import pwd_repository
 import random_pass_generator
 import time
@@ -37,10 +38,12 @@ def get_user(pwd_id):
     else:
         pwd_repository.decrease_count_view(pwd_id, views_left)
 
+    decrypted_pwd = crypto.decrypt_data(item.get('pwd').get('S'))
+
     return jsonify(
         {
             'pwd_id': item.get('pwdId').get('S'),
-            'pwd': item.get('pwd').get('S'),
+            'pwd': decrypted_pwd,
             'view_count': views_left,
             'expiration_date': expiration_date,
         }
@@ -75,8 +78,10 @@ def get_pwd():
         pwd = random_pass_generator.generate(
             use_letters, use_digits, use_punctuation, pass_length)
 
+    encrypted_pwd = crypto.encrypt_data(pwd)
+
     pwd_id = pwd_repository.save_new_pwd(
-        pwd, pass_view_limit, expiration_in_seconds)
+        encrypted_pwd, pass_view_limit, expiration_in_seconds)
 
     return jsonify({'pwd_id': pwd_id})
 

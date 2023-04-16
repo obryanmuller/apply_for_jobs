@@ -14,7 +14,7 @@ if os.environ.get('IS_OFFLINE'):
 PWD_TABLE = os.environ['PWD_TABLE']
 
 
-def get_by_pwd_id(pwd_id):
+def get_by_pwd_id(pwd_id: str):
     result = dynamodb_client.get_item(
         TableName=PWD_TABLE,
         Key={'pwdId': {'S': pwd_id}},
@@ -22,14 +22,14 @@ def get_by_pwd_id(pwd_id):
     return result
 
 
-def delete_by_pwd_id(pwd_id):
+def delete_by_pwd_id(pwd_id: str):
     dynamodb_client.delete_item(
         TableName=PWD_TABLE,
         Key={'pwdId': {'S': pwd_id}},
     )
 
 
-def save_new_pwd(pwd, pass_view_limit, expiration_in_seconds):
+def save_new_pwd(pwd: str, pass_view_limit: int, expiration_in_seconds: int):
     pwd_id = str(uuid.uuid4())
     dynamodb_client.put_item(
         TableName=PWD_TABLE,
@@ -43,7 +43,7 @@ def save_new_pwd(pwd, pass_view_limit, expiration_in_seconds):
     return pwd_id
 
 
-def decrease_count_view(pwd_id, views_left):
+def decrease_count_view(pwd_id: str, views_left: int):
     dynamodb_client.update_item(
         TableName=PWD_TABLE,
         Key={'pwdId': {'S': pwd_id}},

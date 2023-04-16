@@ -1,7 +1,7 @@
 import string
 
 
-def validate_password(use_letters, use_digits, use_punctuation, pass_length, sended_password):
+def validate_password(use_letters: bool, use_digits: bool, use_punctuation: bool, pass_length: bool, sended_password: str):
     if use_letters and not any(c.isalpha() for c in sended_password):
         return False
     if use_digits and not any(c.isdigit() for c in sended_password):

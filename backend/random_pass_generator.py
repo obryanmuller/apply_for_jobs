@@ -2,7 +2,7 @@ import secrets
 import string
 
 
-def generate(use_letters, use_digits, use_punctuation, pass_length):
+def generate(use_letters: bool, use_digits: bool, use_punctuation: bool, pass_length: int):
     alphabet = ''
 
     if use_letters:

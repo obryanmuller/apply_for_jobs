@@ -5,8 +5,10 @@ from flask import Flask, jsonify, make_response, request
 from jsonschema import validate
 import pwd_schemas
 import sended_password_validation
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/pwd/<string:pwd_id>')

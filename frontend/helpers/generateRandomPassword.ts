@@ -1,9 +1,5 @@
 export function generateRandomPassword(
-  pass_length: number,
-  use_alphabetic: boolean,
-  use_numbers: boolean,
-  use_punctuation: boolean
-): string {
+  { passLength, useLetters, useDigits, usePunctuation }: { passLength: number; useLetters: boolean; useDigits: boolean; usePunctuation: boolean; }): string {
   const alphabeticChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const numericChars = '0123456789';
   const punctuationChars = '!@#$%^&*()_+-={}[]|:;"<>,.?~`';
@@ -11,17 +7,17 @@ export function generateRandomPassword(
   let password = '';
   let availableChars = '';
 
-  if (use_alphabetic) {
+  if (useLetters) {
     availableChars += alphabeticChars;
   }
-  if (use_numbers) {
+  if (useDigits) {
     availableChars += numericChars;
   }
-  if (use_punctuation) {
+  if (usePunctuation) {
     availableChars += punctuationChars;
   }
 
-  for (let i = 0; i < pass_length; i++) {
+  for (let i = 0; i < passLength; i++) {
     const randomIndex = Math.floor(Math.random() * availableChars.length);
     password += availableChars[randomIndex];
   }

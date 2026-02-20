@@ -202,7 +202,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/secure-password-api/dev/1771614429483-2026-02-20T19:07:09.483Z/secure-password-api.zip"
+                "S3Key": "serverless/secure-password-api/dev/1771628297796-2026-02-20T22:58:17.796Z/secure-password-api.zip"
               },
               "Handler": "handler.create_pwd",
               "Runtime": "python3.11",
@@ -233,7 +233,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/secure-password-api/dev/1771614429483-2026-02-20T19:07:09.483Z/secure-password-api.zip"
+                "S3Key": "serverless/secure-password-api/dev/1771628297796-2026-02-20T22:58:17.796Z/secure-password-api.zip"
               },
               "Handler": "handler.get_pwd",
               "Runtime": "python3.11",
@@ -257,24 +257,24 @@
               "GetPwdLogGroup"
             ]
           },
-          "CreatePwdLambdaVersionCx3l01al8cdUJ9nfvu2FnRd49pUJepXlx9BxyntqpQ": {
+          "CreatePwdLambdaVersionMW0ylXa5euUpmhTRBHLprNB9HKSOE09B5fjtN3pc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreatePwdLambdaFunction"
               },
-              "CodeSha256": "lPdcKE2YfLLhf4v2lVNRksOHDDq5AkZFRBaxUYMix6Q="
+              "CodeSha256": "wTWVI+kLukz7QYuPNGYkoU7SrNmiDEI221eMyDcxSfY="
             }
           },
-          "GetPwdLambdaVersioni4P1zwvIWkcXaBb7zOoi1WZM7MJq59ca5K8UwwAKMWI": {
+          "GetPwdLambdaVersionL47Mhm2V6T9jpHKgIEan7U0Fq9o5k2XdydfgNL8VY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetPwdLambdaFunction"
               },
-              "CodeSha256": "lPdcKE2YfLLhf4v2lVNRksOHDDq5AkZFRBaxUYMix6Q="
+              "CodeSha256": "wTWVI+kLukz7QYuPNGYkoU7SrNmiDEI221eMyDcxSfY="
             }
           },
           "HttpApi": {
@@ -454,7 +454,7 @@
           "CreatePwdLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreatePwdLambdaVersionCx3l01al8cdUJ9nfvu2FnRd49pUJepXlx9BxyntqpQ"
+              "Ref": "CreatePwdLambdaVersionMW0ylXa5euUpmhTRBHLprNB9HKSOE09B5fjtN3pc"
             },
             "Export": {
               "Name": "sls-secure-password-api-dev-CreatePwdLambdaFunctionQualifiedArn"
@@ -463,7 +463,7 @@
           "GetPwdLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetPwdLambdaVersioni4P1zwvIWkcXaBb7zOoi1WZM7MJq59ca5K8UwwAKMWI"
+              "Ref": "GetPwdLambdaVersionL47Mhm2V6T9jpHKgIEan7U0Fq9o5k2XdydfgNL8VY"
             },
             "Export": {
               "Name": "sls-secure-password-api-dev-GetPwdLambdaFunctionQualifiedArn"
@@ -591,7 +591,9 @@
     },
     "custom": {
       "pythonRequirements": {
-        "dockerizePip": "non-linux"
+        "dockerizePip": "non-linux",
+        "useStaticCache": true,
+        "useDownloadCache": true
       }
     },
     "plugins": [
@@ -617,7 +619,7 @@
         "timeout": 6,
         "runtime": "python3.11",
         "vpc": {},
-        "versionLogicalId": "CreatePwdLambdaVersionCx3l01al8cdUJ9nfvu2FnRd49pUJepXlx9BxyntqpQ"
+        "versionLogicalId": "CreatePwdLambdaVersionMW0ylXa5euUpmhTRBHLprNB9HKSOE09B5fjtN3pc"
       },
       "getPwd": {
         "handler": "handler.get_pwd",
@@ -637,7 +639,7 @@
         "timeout": 6,
         "runtime": "python3.11",
         "vpc": {},
-        "versionLogicalId": "GetPwdLambdaVersioni4P1zwvIWkcXaBb7zOoi1WZM7MJq59ca5K8UwwAKMWI"
+        "versionLogicalId": "GetPwdLambdaVersionL47Mhm2V6T9jpHKgIEan7U0Fq9o5k2XdydfgNL8VY"
       }
     },
     "configValidationMode": "warn",
@@ -662,7 +664,7 @@
     "artifact": "C:\\Users\\Natalia\\Documents\\Projetos\\apply_for_jobs\\backend\\.serverless\\secure-password-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/secure-password-api/dev/1771614429483-2026-02-20T19:07:09.483Z",
+    "artifactDirectoryName": "serverless/secure-password-api/dev/1771628297796-2026-02-20T22:58:17.796Z",
     "artifact": "secure-password-api.zip"
   }
 }

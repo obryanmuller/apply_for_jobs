@@ -1,55 +1,32 @@
-service: totvs-test
-
-frameworkVersion: '3'
-
-custom:
-  tableName: 'pwd-table-${sls:stage}'
-  wsgi:
-    app: app.app
+service: secure-password-api
 
 provider:
   name: aws
-  runtime: python3.9
-  httpApi:
-    cors: true
+  runtime: python3.11
+  region: us-east-1
+  environment:
+    TABLE_NAME: secure-secrets
+    ENCRYPTION_KEY: "_nQF7e7aQoiHjpBMYg99Gwm5_6dpfwnt7_BL4Y7c2Og="
   iam:
     role:
       statements:
         - Effect: Allow
           Action:
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
             - dynamodb:PutItem
+            - dynamodb:GetItem
             - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
-          Resource:
-            - Fn::GetAtt: [ PwdTable, Arn ]
-  environment:
-    PWD_TABLE: ${self:custom.tableName}
+          Resource: arn:aws:dynamodb:us-east-1:*:table/secure-secrets
 
 functions:
-  api:
-    handler: wsgi_handler.handler
+  createPwd:
+    handler: handler.create_pwd
     events:
-      - httpApi: '*'
-
+      - httpApi:
+          path: /pwd
+          method: post
 plugins:
-  - serverless-wsgi
   - serverless-python-requirements
 
-resources:
-  Resources:
-    PwdTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: pwdId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: pwdId
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        TableName: ${self:custom.tableName}
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux

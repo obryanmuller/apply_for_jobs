@@ -24,6 +24,12 @@ functions:
       - httpApi:
           path: /pwd
           method: post
+  getPwd:
+    handler: handler.get_pwd
+    events:
+      - httpApi:
+          path: /pwd/{pwdId}
+          method: get
 plugins:
   - serverless-python-requirements
 

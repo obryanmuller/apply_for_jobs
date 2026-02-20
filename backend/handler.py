@@ -1,34 +1,13 @@
 import json
-import time
 import secrets
-import hashlib
-import boto3
-import os 
-from cryptography.fernet import Fernet
-from decimal import Decimal
 
-dynamodb = boto3.resource("dynamodb")
-TABLE_NAME = os.environ["TABLE_NAME"]
-table = dynamodb.Table(TABLE_NAME)
+from repositories.pwd_repository import save_secret, get_secret, consume_view
+from services.password_generator import generate_password
+from services.crypto_service import encrypt, decrypt
+from utils.http import json_response
+from utils.security import sha256_hex, get_path_param
+from utils.time_utils import now_unix, is_expired, is_view_limit_reached
 
-def response(status_code: int, body: dict):
-    def default(o):
-        if isinstance(o, Decimal):
-            # Dynamo usa Decimal; convertendo pra int se for inteiro, senão float
-            return int(o) if o % 1 == 0 else float(o)
-        raise TypeError
-
-    return {
-        "statusCode": status_code,
-        "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(body, default=default),
-    }
-
-def sha256_hex(value: str) -> str:
-    return hashlib.sha256(value.encode()).hexdigest()
-
-def get_path_param(event: dict, name: str) -> str | None:
-    return (event.get("pathParameters") or {}).get(name)
 
 def create_pwd(event, context):
     body = json.loads(event.get("body") or "{}")
@@ -36,84 +15,64 @@ def create_pwd(event, context):
     expiration = int(body.get("expiration_in_seconds", 3600))
     max_views = int(body.get("pass_view_limit", 1))
 
-    # aqui você pode receber do body ou gerar
-    secret_plain = body.get("secret", "minhaSenha123!")
-    if not isinstance(secret_plain, str) or not secret_plain:
-        return {"statusCode": 400, "body": json.dumps({"error": "secret inválido"})}
+    sended_password = body.get("sended_password")
+
+    if sended_password is not None:
+        if not isinstance(sended_password, str) or not sended_password.strip():
+            return json_response(400, {"message": "sended_password inválido"})
+        secret_plain = sended_password.strip()
+    else:
+        use_letters = bool(body.get("use_letters", True))
+        use_digits = bool(body.get("use_digits", True))
+        use_punctuation = bool(body.get("use_punctuation", True))
+        pass_length = int(body.get("pass_length", 16))
+
+        try:
+            secret_plain = generate_password(use_letters, use_digits, use_punctuation, pass_length)
+        except ValueError as e:
+            return json_response(400, {"message": str(e)})
 
     token = secrets.token_urlsafe(32)
-    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    token_hash = sha256_hex(token)
 
     item = {
         "token_hash": token_hash,
         "ciphertext": encrypt(secret_plain),
-        "expires_at": int(time.time()) + expiration,
+        "expires_at": now_unix() + expiration,
         "max_views": max_views,
         "views_used": 0,
-        "revoked": False
+        "revoked": False,
     }
 
-    table.put_item(Item=item)
+    save_secret(item)
+    return json_response(201, {"pwdId": token})
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({"pwdId": token})
-    }
 
 def get_pwd(event, context):
     pwd_id = get_path_param(event, "pwdId")
     if not pwd_id:
-        return response(400, {"message": "pwdId ausente"})
+        return json_response(400, {"message": "pwdId ausente"})
 
     token_hash = sha256_hex(pwd_id)
 
-    res = table.get_item(Key={"token_hash": token_hash})
-    item = res.get("Item")
+    item = get_secret(token_hash)
     if not item:
-        return response(404, {"message": "Link inválido"})
-    if item.get("revoked") is True or is_expired(item) or is_view_limit_reached(item):
-        return response(410, {"message": "Link expirou ou atingiu o limite de visualizações"})
+        return json_response(404, {"message": "Link inválido"})
 
-    try:
-        table.update_item(
-            Key={"token_hash": token_hash},
-            UpdateExpression="SET views_used = views_used + :one",
-            ConditionExpression="views_used < max_views AND expires_at > :now AND (attribute_not_exists(revoked) OR revoked = :false)",
-            ExpressionAttributeValues={
-                ":one": 1,
-                ":now": now_unix(),
-                ":false": False,
-            },
-    )
-    except Exception as e:
-        # se falhou aqui, significa que outra requisição já consumiu a view
-        if "ConditionalCheckFailedException" in str(e):
-            return response(410, {"message": "Link expirou ou view já consumida"})
-        return response(500, {"message": "Erro ao atualizar visualização"})
+    expired = is_expired(item["expires_at"])
+    limit_reached = is_view_limit_reached(item["views_used"], item["max_views"])
+    if item.get("revoked") is True or expired or limit_reached:
+        return json_response(410, {"message": "Link expirou ou atingiu o limite de visualizações"})
+
+    if not consume_view(token_hash):
+        return json_response(410, {"message": "Link expirou ou view já consumida"})
+
     secret = decrypt(item["ciphertext"])
+    views_remaining = int(item["max_views"]) - (int(item["views_used"]) + 1)
 
-    return response(200, {
-        "pwd_id": pwd_id,
+    return json_response(200, {
+        "pwdId": pwd_id,
         "pwd": secret,
         "expiration_date": item["expires_at"],
-        "view_count": int(item["max_views"]) - (int(item["views_used"]) + 1)
+        "view_count": views_remaining,
     })
-
-def encrypt(plain: str) -> str:
-    key = os.environ["ENCRYPTION_KEY"].encode()
-    f = Fernet(key)
-    return f.encrypt(plain.encode()).decode()
-
-def decrypt(ciphertext: str) -> str:
-    key = os.environ["ENCRYPTION_KEY"].encode()
-    f = Fernet(key)
-    return f.decrypt(ciphertext.encode()).decode()
-
-def now_unix() -> int:
-    return int(time.time())
-
-def is_expired(item: dict) -> bool:
-    return int(item["expires_at"]) <= now_unix()
-
-def is_view_limit_reached(item: dict) -> bool:
-    return int(item["views_used"]) >= int(item["max_views"])

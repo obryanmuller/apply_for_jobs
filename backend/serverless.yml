@@ -36,3 +36,5 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: non-linux
+    useStaticCache: true
+    useDownloadCache: true

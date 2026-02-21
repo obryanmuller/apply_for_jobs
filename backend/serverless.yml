@@ -19,16 +19,24 @@ provider:
 
 functions:
   createPwd:
-    handler: handler.create_pwd
+    handler: handlers.create_pwd.handler
     events:
       - httpApi:
           path: /pwd
           method: post
+
   getPwd:
-    handler: handler.get_pwd
+    handler: handlers.get_pwd.handler
     events:
       - httpApi:
           path: /pwd/{pwdId}
+          method: get
+
+  health:
+    handler: handlers.health.handler
+    events:
+      - httpApi:
+          path: /health
           method: get
 plugins:
   - serverless-python-requirements

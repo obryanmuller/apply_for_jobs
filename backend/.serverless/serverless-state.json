@@ -114,6 +114,12 @@
               "LogGroupName": "/aws/lambda/secure-password-api-dev-getPwd"
             }
           },
+          "HealthLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/secure-password-api-dev-health"
+            }
+          },
           "IamRoleLambdaExecution": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -202,9 +208,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/secure-password-api/dev/1771628297796-2026-02-20T22:58:17.796Z/secure-password-api.zip"
+                "S3Key": "serverless/secure-password-api/dev/1771702283069-2026-02-21T19:31:23.069Z/secure-password-api.zip"
               },
-              "Handler": "handler.create_pwd",
+              "Handler": "handlers.create_pwd.handler",
               "Runtime": "python3.11",
               "FunctionName": "secure-password-api-dev-createPwd",
               "MemorySize": 1024,
@@ -233,9 +239,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/secure-password-api/dev/1771628297796-2026-02-20T22:58:17.796Z/secure-password-api.zip"
+                "S3Key": "serverless/secure-password-api/dev/1771702283069-2026-02-21T19:31:23.069Z/secure-password-api.zip"
               },
-              "Handler": "handler.get_pwd",
+              "Handler": "handlers.get_pwd.handler",
               "Runtime": "python3.11",
               "FunctionName": "secure-password-api-dev-getPwd",
               "MemorySize": 1024,
@@ -257,24 +263,65 @@
               "GetPwdLogGroup"
             ]
           },
-          "CreatePwdLambdaVersionMW0ylXa5euUpmhTRBHLprNB9HKSOE09B5fjtN3pc": {
+          "HealthLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/secure-password-api/dev/1771702283069-2026-02-21T19:31:23.069Z/secure-password-api.zip"
+              },
+              "Handler": "handlers.health.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "secure-password-api-dev-health",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "TABLE_NAME": "secure-secrets",
+                  "ENCRYPTION_KEY": "_nQF7e7aQoiHjpBMYg99Gwm5_6dpfwnt7_BL4Y7c2Og="
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "HealthLogGroup"
+            ]
+          },
+          "CreatePwdLambdaVersionOLRU429UHo8rXxzp955I2q4WTI8pOCbu4yid1ob1I": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreatePwdLambdaFunction"
               },
-              "CodeSha256": "wTWVI+kLukz7QYuPNGYkoU7SrNmiDEI221eMyDcxSfY="
+              "CodeSha256": "urjWw8ncPPUxm/JB0ao5mwPhr5IyKTmeHdNLJgSTG3g="
             }
           },
-          "GetPwdLambdaVersionL47Mhm2V6T9jpHKgIEan7U0Fq9o5k2XdydfgNL8VY": {
+          "GetPwdLambdaVersion02hfGBexM1TlRhRPcnbisrGiQmxu6tstT7mp9CbKA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetPwdLambdaFunction"
               },
-              "CodeSha256": "wTWVI+kLukz7QYuPNGYkoU7SrNmiDEI221eMyDcxSfY="
+              "CodeSha256": "urjWw8ncPPUxm/JB0ao5mwPhr5IyKTmeHdNLJgSTG3g="
+            }
+          },
+          "HealthLambdaVersion7SuU6FPZNwCUg7BNzMU4ohAaLg7z7t8ZglhX6PyA": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "HealthLambdaFunction"
+              },
+              "CodeSha256": "urjWw8ncPPUxm/JB0ao5mwPhr5IyKTmeHdNLJgSTG3g="
             }
           },
           "HttpApi": {
@@ -440,6 +487,78 @@
               }
             },
             "DependsOn": "HttpApiIntegrationGetPwd"
+          },
+          "HealthLambdaPermissionHttpApi": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "HealthLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "HttpApi"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "HttpApiIntegrationHealth": {
+            "Type": "AWS::ApiGatewayV2::Integration",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "IntegrationType": "AWS_PROXY",
+              "IntegrationUri": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"HealthLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
+              },
+              "PayloadFormatVersion": "2.0",
+              "TimeoutInMillis": 30000
+            }
+          },
+          "HttpApiRouteGetHealth": {
+            "Type": "AWS::ApiGatewayV2::Route",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "RouteKey": "GET /health",
+              "Target": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "integrations",
+                    {
+                      "Ref": "HttpApiIntegrationHealth"
+                    }
+                  ]
+                ]
+              }
+            },
+            "DependsOn": "HttpApiIntegrationHealth"
           }
         },
         "Outputs": {
@@ -454,7 +573,7 @@
           "CreatePwdLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreatePwdLambdaVersionMW0ylXa5euUpmhTRBHLprNB9HKSOE09B5fjtN3pc"
+              "Ref": "CreatePwdLambdaVersionOLRU429UHo8rXxzp955I2q4WTI8pOCbu4yid1ob1I"
             },
             "Export": {
               "Name": "sls-secure-password-api-dev-CreatePwdLambdaFunctionQualifiedArn"
@@ -463,10 +582,19 @@
           "GetPwdLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetPwdLambdaVersionL47Mhm2V6T9jpHKgIEan7U0Fq9o5k2XdydfgNL8VY"
+              "Ref": "GetPwdLambdaVersion02hfGBexM1TlRhRPcnbisrGiQmxu6tstT7mp9CbKA"
             },
             "Export": {
               "Name": "sls-secure-password-api-dev-GetPwdLambdaFunctionQualifiedArn"
+            }
+          },
+          "HealthLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "HealthLambdaVersion7SuU6FPZNwCUg7BNzMU4ohAaLg7z7t8ZglhX6PyA"
+            },
+            "Export": {
+              "Name": "sls-secure-password-api-dev-HealthLambdaFunctionQualifiedArn"
             }
           },
           "HttpApiId": {
@@ -602,7 +730,7 @@
     "pluginsData": {},
     "functions": {
       "createPwd": {
-        "handler": "handler.create_pwd",
+        "handler": "handlers.create_pwd.handler",
         "events": [
           {
             "httpApi": {
@@ -619,10 +747,10 @@
         "timeout": 6,
         "runtime": "python3.11",
         "vpc": {},
-        "versionLogicalId": "CreatePwdLambdaVersionMW0ylXa5euUpmhTRBHLprNB9HKSOE09B5fjtN3pc"
+        "versionLogicalId": "CreatePwdLambdaVersionOLRU429UHo8rXxzp955I2q4WTI8pOCbu4yid1ob1I"
       },
       "getPwd": {
-        "handler": "handler.get_pwd",
+        "handler": "handlers.get_pwd.handler",
         "events": [
           {
             "httpApi": {
@@ -639,7 +767,27 @@
         "timeout": 6,
         "runtime": "python3.11",
         "vpc": {},
-        "versionLogicalId": "GetPwdLambdaVersionL47Mhm2V6T9jpHKgIEan7U0Fq9o5k2XdydfgNL8VY"
+        "versionLogicalId": "GetPwdLambdaVersion02hfGBexM1TlRhRPcnbisrGiQmxu6tstT7mp9CbKA"
+      },
+      "health": {
+        "handler": "handlers.health.handler",
+        "events": [
+          {
+            "httpApi": {
+              "path": "/health",
+              "method": "get"
+            },
+            "resolvedMethod": "GET",
+            "resolvedPath": "/health"
+          }
+        ],
+        "name": "secure-password-api-dev-health",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "HealthLambdaVersion7SuU6FPZNwCUg7BNzMU4ohAaLg7z7t8ZglhX6PyA"
       }
     },
     "configValidationMode": "warn",
@@ -664,7 +812,7 @@
     "artifact": "C:\\Users\\Natalia\\Documents\\Projetos\\apply_for_jobs\\backend\\.serverless\\secure-password-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/secure-password-api/dev/1771628297796-2026-02-20T22:58:17.796Z",
+    "artifactDirectoryName": "serverless/secure-password-api/dev/1771702283069-2026-02-21T19:31:23.069Z",
     "artifact": "secure-password-api.zip"
   }
 }

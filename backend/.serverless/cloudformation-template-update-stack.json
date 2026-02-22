@@ -152,7 +152,8 @@
                   "Action": [
                     "dynamodb:PutItem",
                     "dynamodb:GetItem",
-                    "dynamodb:UpdateItem"
+                    "dynamodb:UpdateItem",
+                    "dynamodb:DeleteItem"
                   ],
                   "Resource": "arn:aws:dynamodb:us-east-1:*:table/secure-secrets"
                 }
@@ -183,7 +184,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/secure-password-api/dev/1771702283069-2026-02-21T19:31:23.069Z/secure-password-api.zip"
+          "S3Key": "serverless/secure-password-api/dev/1771766103943-2026-02-22T13:15:03.943Z/secure-password-api.zip"
         },
         "Handler": "handlers.create_pwd.handler",
         "Runtime": "python3.11",
@@ -214,7 +215,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/secure-password-api/dev/1771702283069-2026-02-21T19:31:23.069Z/secure-password-api.zip"
+          "S3Key": "serverless/secure-password-api/dev/1771766103943-2026-02-22T13:15:03.943Z/secure-password-api.zip"
         },
         "Handler": "handlers.get_pwd.handler",
         "Runtime": "python3.11",
@@ -245,7 +246,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/secure-password-api/dev/1771702283069-2026-02-21T19:31:23.069Z/secure-password-api.zip"
+          "S3Key": "serverless/secure-password-api/dev/1771766103943-2026-02-22T13:15:03.943Z/secure-password-api.zip"
         },
         "Handler": "handlers.health.handler",
         "Runtime": "python3.11",
@@ -269,34 +270,34 @@
         "HealthLogGroup"
       ]
     },
-    "CreatePwdLambdaVersionOLRU429UHo8rXxzp955I2q4WTI8pOCbu4yid1ob1I": {
+    "CreatePwdLambdaVersionH3OmhnQeOcAnprj1FPqCs2YMggBWmKCawyUUxdkJI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreatePwdLambdaFunction"
         },
-        "CodeSha256": "urjWw8ncPPUxm/JB0ao5mwPhr5IyKTmeHdNLJgSTG3g="
+        "CodeSha256": "NojPj1BI8uFObiX55y7RIUI/B00t2onARHdR7RWsqnw="
       }
     },
-    "GetPwdLambdaVersion02hfGBexM1TlRhRPcnbisrGiQmxu6tstT7mp9CbKA": {
+    "GetPwdLambdaVersionCrci7Qku20ZflGacvAJz02DoTj26CqfMkKedeFp2QM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetPwdLambdaFunction"
         },
-        "CodeSha256": "urjWw8ncPPUxm/JB0ao5mwPhr5IyKTmeHdNLJgSTG3g="
+        "CodeSha256": "NojPj1BI8uFObiX55y7RIUI/B00t2onARHdR7RWsqnw="
       }
     },
-    "HealthLambdaVersion7SuU6FPZNwCUg7BNzMU4ohAaLg7z7t8ZglhX6PyA": {
+    "HealthLambdaVersionvhyyl5loMMg6EXox1OYdijlAmQv3OvVRpXVYgnXMmE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "HealthLambdaFunction"
         },
-        "CodeSha256": "urjWw8ncPPUxm/JB0ao5mwPhr5IyKTmeHdNLJgSTG3g="
+        "CodeSha256": "NojPj1BI8uFObiX55y7RIUI/B00t2onARHdR7RWsqnw="
       }
     },
     "HttpApi": {
@@ -557,7 +558,7 @@
     "CreatePwdLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreatePwdLambdaVersionOLRU429UHo8rXxzp955I2q4WTI8pOCbu4yid1ob1I"
+        "Ref": "CreatePwdLambdaVersionH3OmhnQeOcAnprj1FPqCs2YMggBWmKCawyUUxdkJI"
       },
       "Export": {
         "Name": "sls-secure-password-api-dev-CreatePwdLambdaFunctionQualifiedArn"
@@ -566,7 +567,7 @@
     "GetPwdLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetPwdLambdaVersion02hfGBexM1TlRhRPcnbisrGiQmxu6tstT7mp9CbKA"
+        "Ref": "GetPwdLambdaVersionCrci7Qku20ZflGacvAJz02DoTj26CqfMkKedeFp2QM"
       },
       "Export": {
         "Name": "sls-secure-password-api-dev-GetPwdLambdaFunctionQualifiedArn"
@@ -575,7 +576,7 @@
     "HealthLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "HealthLambdaVersion7SuU6FPZNwCUg7BNzMU4ohAaLg7z7t8ZglhX6PyA"
+        "Ref": "HealthLambdaVersionvhyyl5loMMg6EXox1OYdijlAmQv3OvVRpXVYgnXMmE"
       },
       "Export": {
         "Name": "sls-secure-password-api-dev-HealthLambdaFunctionQualifiedArn"

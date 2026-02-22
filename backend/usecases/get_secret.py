@@ -1,4 +1,4 @@
-from infra.pwd_repository import get_secret as repo_get_secret, consume_view
+from infra.pwd_repository import get_secret as repo_get_secret, consume_view_and_maybe_delete
 from infra.crypto_service import decrypt
 from utils.http import json_response
 from utils.security import sha256_hex, get_path_param
@@ -21,7 +21,8 @@ def get_secret(event: dict):
     if item.get("revoked") is True or expired or limit_reached:
         return json_response(410, {"message": "Link expirou ou atingiu o limite de visualizações"})
 
-    if not consume_view(token_hash):
+    result = consume_view_and_maybe_delete(token_hash)
+    if result == "not_allowed":
         return json_response(410, {"message": "Link expirou ou view já consumida"})
 
     secret = decrypt(item["ciphertext"])

@@ -1,8 +1,7 @@
-from infra.pwd_repository import get_secret as repo_get_secret, consume_view_and_maybe_delete
+from infra.pwd_repository import consume_view_and_maybe_delete
 from infra.crypto_service import decrypt
 from utils.http import json_response
 from utils.security import sha256_hex, get_path_param
-from utils.time_utils import is_expired, is_view_limit_reached
 
 
 def get_secret(event: dict):
@@ -12,25 +11,25 @@ def get_secret(event: dict):
 
     token_hash = sha256_hex(pwd_id)
 
-    item = repo_get_secret(token_hash)
-    if not item:
+    status, item = consume_view_and_maybe_delete(token_hash)
+
+    if status == "not_found":
         return json_response(404, {"message": "Link inválido"})
 
-    expired = is_expired(item["expires_at"])
-    limit_reached = is_view_limit_reached(item["views_used"], item["max_views"])
-    if item.get("revoked") is True or expired or limit_reached:
+    if status == "not_allowed":
         return json_response(410, {"message": "Link expirou ou atingiu o limite de visualizações"})
 
-    result = consume_view_and_maybe_delete(token_hash)
-    if result == "not_allowed":
-        return json_response(410, {"message": "Link expirou ou view já consumida"})
-
+    # item é ALL_NEW (consistente)
     secret = decrypt(item["ciphertext"])
-    views_remaining = int(item["max_views"]) - (int(item["views_used"]) + 1)
+
+    expires_at = int(item.get("expires_at", 0))
+    views_used = int(item.get("views_used", 0))
+    max_views = int(item.get("max_views", 0))
+    views_remaining = max_views - views_used
 
     return json_response(200, {
         "pwdId": pwd_id,
         "pwd": secret,
-        "expiration_date": item["expires_at"],
+        "expiration_date": expires_at,
         "view_count": views_remaining,
     })

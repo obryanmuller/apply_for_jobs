@@ -209,7 +209,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/secure-password-api/dev/1771766103943-2026-02-22T13:15:03.943Z/secure-password-api.zip"
+                "S3Key": "serverless/secure-password-api/dev/1771869567097-2026-02-23T17:59:27.097Z/secure-password-api.zip"
               },
               "Handler": "handlers.create_pwd.handler",
               "Runtime": "python3.11",
@@ -240,7 +240,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/secure-password-api/dev/1771766103943-2026-02-22T13:15:03.943Z/secure-password-api.zip"
+                "S3Key": "serverless/secure-password-api/dev/1771869567097-2026-02-23T17:59:27.097Z/secure-password-api.zip"
               },
               "Handler": "handlers.get_pwd.handler",
               "Runtime": "python3.11",
@@ -271,7 +271,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/secure-password-api/dev/1771766103943-2026-02-22T13:15:03.943Z/secure-password-api.zip"
+                "S3Key": "serverless/secure-password-api/dev/1771869567097-2026-02-23T17:59:27.097Z/secure-password-api.zip"
               },
               "Handler": "handlers.health.handler",
               "Runtime": "python3.11",
@@ -295,34 +295,34 @@
               "HealthLogGroup"
             ]
           },
-          "CreatePwdLambdaVersionH3OmhnQeOcAnprj1FPqCs2YMggBWmKCawyUUxdkJI": {
+          "CreatePwdLambdaVersionVxPOJVdXKqs8YTbnbujQnsEprDTECTexLObkJCZgck": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreatePwdLambdaFunction"
               },
-              "CodeSha256": "NojPj1BI8uFObiX55y7RIUI/B00t2onARHdR7RWsqnw="
+              "CodeSha256": "af2vRVA8aySpifp1m/tn0i8Wya2zGSKe22M1vD28cf4="
             }
           },
-          "GetPwdLambdaVersionCrci7Qku20ZflGacvAJz02DoTj26CqfMkKedeFp2QM": {
+          "GetPwdLambdaVersionbppmKwwBgp7th2g5f9931qtWkD2MS0Hkw0640Qy1xWg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetPwdLambdaFunction"
               },
-              "CodeSha256": "NojPj1BI8uFObiX55y7RIUI/B00t2onARHdR7RWsqnw="
+              "CodeSha256": "af2vRVA8aySpifp1m/tn0i8Wya2zGSKe22M1vD28cf4="
             }
           },
-          "HealthLambdaVersionvhyyl5loMMg6EXox1OYdijlAmQv3OvVRpXVYgnXMmE": {
+          "HealthLambdaVersionoWOuqFhFotidnl1SqJtmRXGcBdSghBe20PnpbKHtM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "HealthLambdaFunction"
               },
-              "CodeSha256": "NojPj1BI8uFObiX55y7RIUI/B00t2onARHdR7RWsqnw="
+              "CodeSha256": "af2vRVA8aySpifp1m/tn0i8Wya2zGSKe22M1vD28cf4="
             }
           },
           "HttpApi": {
@@ -574,7 +574,7 @@
           "CreatePwdLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreatePwdLambdaVersionH3OmhnQeOcAnprj1FPqCs2YMggBWmKCawyUUxdkJI"
+              "Ref": "CreatePwdLambdaVersionVxPOJVdXKqs8YTbnbujQnsEprDTECTexLObkJCZgck"
             },
             "Export": {
               "Name": "sls-secure-password-api-dev-CreatePwdLambdaFunctionQualifiedArn"
@@ -583,7 +583,7 @@
           "GetPwdLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetPwdLambdaVersionCrci7Qku20ZflGacvAJz02DoTj26CqfMkKedeFp2QM"
+              "Ref": "GetPwdLambdaVersionbppmKwwBgp7th2g5f9931qtWkD2MS0Hkw0640Qy1xWg"
             },
             "Export": {
               "Name": "sls-secure-password-api-dev-GetPwdLambdaFunctionQualifiedArn"
@@ -592,7 +592,7 @@
           "HealthLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "HealthLambdaVersionvhyyl5loMMg6EXox1OYdijlAmQv3OvVRpXVYgnXMmE"
+              "Ref": "HealthLambdaVersionoWOuqFhFotidnl1SqJtmRXGcBdSghBe20PnpbKHtM"
             },
             "Export": {
               "Name": "sls-secure-password-api-dev-HealthLambdaFunctionQualifiedArn"
@@ -748,7 +748,7 @@
         "timeout": 6,
         "runtime": "python3.11",
         "vpc": {},
-        "versionLogicalId": "CreatePwdLambdaVersionH3OmhnQeOcAnprj1FPqCs2YMggBWmKCawyUUxdkJI"
+        "versionLogicalId": "CreatePwdLambdaVersionVxPOJVdXKqs8YTbnbujQnsEprDTECTexLObkJCZgck"
       },
       "getPwd": {
         "handler": "handlers.get_pwd.handler",
@@ -768,7 +768,7 @@
         "timeout": 6,
         "runtime": "python3.11",
         "vpc": {},
-        "versionLogicalId": "GetPwdLambdaVersionCrci7Qku20ZflGacvAJz02DoTj26CqfMkKedeFp2QM"
+        "versionLogicalId": "GetPwdLambdaVersionbppmKwwBgp7th2g5f9931qtWkD2MS0Hkw0640Qy1xWg"
       },
       "health": {
         "handler": "handlers.health.handler",
@@ -788,7 +788,7 @@
         "timeout": 6,
         "runtime": "python3.11",
         "vpc": {},
-        "versionLogicalId": "HealthLambdaVersionvhyyl5loMMg6EXox1OYdijlAmQv3OvVRpXVYgnXMmE"
+        "versionLogicalId": "HealthLambdaVersionoWOuqFhFotidnl1SqJtmRXGcBdSghBe20PnpbKHtM"
       }
     },
     "configValidationMode": "warn",
@@ -813,7 +813,7 @@
     "artifact": "C:\\Users\\Natalia\\Documents\\Projetos\\apply_for_jobs\\backend\\.serverless\\secure-password-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/secure-password-api/dev/1771766103943-2026-02-22T13:15:03.943Z",
+    "artifactDirectoryName": "serverless/secure-password-api/dev/1771869567097-2026-02-23T17:59:27.097Z",
     "artifact": "secure-password-api.zip"
   }
 }

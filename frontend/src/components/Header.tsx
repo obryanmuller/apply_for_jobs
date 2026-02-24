@@ -1,38 +1,46 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import styles from "./Header.module.css";
 
 export function Header() {
+  const pathname = usePathname();
+
+  /**
+   * Verifica se o link está ativo. 
+   * Para "Visualizar", consideramos ativo se o caminho começar com /visualizar
+   */
+  const isActive = (path: string) => {
+    if (path === "/") return pathname === "/";
+    return pathname.startsWith(path);
+  };
+
   return (
-    <header
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "15px 60px",
-        backgroundColor: "#011F2B",
-        width: "100%",
-        boxSizing: "border-box",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-        {/* Logo Direta sem círculo */}
+    <header className={styles.header}>
+      <Link href="/" className={styles.logoSection} style={{ textDecoration: 'none' }}>
         <Image
-          src="/icontotvs.png" 
-          alt="TOTVS"
-          width={60} 
-          height={50}
+          src="/icontotvs.png"
+          alt="TOTVS Logo"
+          width={38}
+          height={32}
           style={{ objectFit: "contain" }}
         />
-        <h1 style={{ color: "white", fontSize: "28px", fontWeight: "bold", margin: 0 }}>
-          Desafio técnico Totvs
-        </h1>
-      </div>
+        <h1 className={styles.title}>Desafio Técnico</h1>
+      </Link>
 
-      <nav style={{ display: "flex", gap: "40px" }}>
-        <Link href="/" style={{ color: "white", textDecoration: "none", fontSize: "24px", fontWeight: "bold" }}>
+      <nav className={styles.nav}>
+        <Link 
+          href="/" 
+          className={`${styles.navLink} ${isActive("/") ? styles.activeLink : ""}`}
+        >
           Gerar
         </Link>
-        <Link href="/visualizar" style={{ color: "white", textDecoration: "none", fontSize: "24px", fontWeight: "bold", opacity: 0.7 }}>
+        <Link 
+          href="/visualizar" 
+          className={`${styles.navLink} ${isActive("/visualizar") ? styles.activeLink : ""}`}
+        >
           Visualizar
         </Link>
       </nav>

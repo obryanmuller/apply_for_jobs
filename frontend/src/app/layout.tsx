@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "Desafio técnico Totvs",
@@ -19,8 +18,7 @@ export default function RootLayout({
         backgroundColor: "#F5F5F5", 
         fontFamily: "sans-serif",
         minHeight: "100vh"
-      }}>
-       
+      }}>    
         {children}
       </body>
     </html>

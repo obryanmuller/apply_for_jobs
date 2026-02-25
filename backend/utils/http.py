@@ -1,6 +1,12 @@
 import json
 from decimal import Decimal
 
+CORS_HEADERS = {
+    "Access-Control-Allow-Origin": "http://localhost:3000",  # pode usar "*" temporariamente
+    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+    "Access-Control-Allow-Methods": "OPTIONS,GET,POST",
+}
+
 def json_response(status_code: int, body: dict):
     def default(o):
         if isinstance(o, Decimal):
@@ -9,6 +15,9 @@ def json_response(status_code: int, body: dict):
 
     return {
         "statusCode": status_code,
-        "headers": {"Content-Type": "application/json"},
+        "headers": {
+            "Content-Type": "application/json",
+            **CORS_HEADERS,
+        },
         "body": json.dumps(body, default=default),
     }

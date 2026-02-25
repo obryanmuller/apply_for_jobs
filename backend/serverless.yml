@@ -26,6 +26,13 @@ functions:
           path: /pwd
           method: post
 
+  optionsPwd:
+    handler: handlers.options.handler
+    events:
+      - httpApi:
+          path: /pwd
+          method: options
+
   getPwd:
     handler: handlers.get_pwd.handler
     events:

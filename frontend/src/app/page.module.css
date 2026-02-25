@@ -2,203 +2,144 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 88vh;
+  min-height: 100vh;
   background: radial-gradient(circle at top left, #f8fafc, #e2e8f0, #cbd5e1);
-  padding: 15px;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .card {
-  width: 100%;
-  max-width: 880px; /* Aumentado de 800px para 880px */
-  display: grid;
-  grid-template-columns: 1fr 280px; /* Coluna direita um pouco maior */
+  width: 1000px;
+  height: 660px;
   background: #ffffff;
   border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-.leftCol {
-  padding: 35px 45px; /* Aumentado paddings internos */
-  display: flex;
-  flex-direction: column;
-  gap: 16px; /* Gap entre blocos levemente maior */
-}
-
-.rightCol {
-  background: #0f172a;
-  padding: 35px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  text-align: center;
-}
-
-
-
-.fadeIn { animation: fadeIn 0.3s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
-.section { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 6px; /* Aumentado de 4px para 6px */
-}
-
-.boxTitle {
-  font-weight: 700;
-  font-size: 10.5px;
-  color: #0f172a;
-  text-transform: uppercase;
-  letter-spacing: 1.3px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.dynamicLabel {
-  font-size: 9.5px;
-  color: #0f172a;
-  background: #f1f5f9;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-weight: 600;
-}
-
-.inputWrapper { position: relative; display: flex; align-items: center; }
-
-.inputText {
-  width: 100%;
-  padding: 14px 18px; /* Input mais alto */
-  padding-right: 50px;
-  border-radius: 12px;
-  border: 2px solid #f1f5f9;
-  font-size: 15px;
-  outline: none;
-  background: #f8fafc;
-  transition: all 0.2s ease;
-  color: #1e293b;
-}
-
-.inputText:focus { border-color: #0f172a; background: #fff; }
-
-.innerGenerateBtn {
+/* Base das faces Brancas */
+.sideFace {
   position: absolute;
-  right: 12px;
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  cursor: pointer;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  padding: 40px 60px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  transition: 0.2s;
-  color: #0f172a;
-}
-
-.innerGenerateBtn:hover:not(:disabled) { background: #f1f5f9; border-color: #0f172a; }
-
-.checkboxGroup { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-
-.customCheck {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  background: #fff;
-  border: 2px solid #f1f5f9;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #64748b;
-  transition: 0.2s;
-}
-
-.checkboxLabel input:checked + .customCheck { border-color: #0f172a; background: #0f172a; color: #fff; }
-
-.controlRow {
-  display: grid;
-  grid-template-columns: 1fr 75px; /* Slot do número aumentado de 65px para 75px */
-  align-items: center;
-  gap: 14px;
-  background: #f8fafc;
-  padding: 8px 14px;
-  border-radius: 12px;
-  border: 1px solid #f1f5f9;
+  transition: all 0.6s cubic-bezier(0.77, 0, 0.175, 1);
   box-sizing: border-box;
 }
 
-.maxAccessLabel {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: #0f172a;
-  text-transform: uppercase;
+/* Lado de Criação (Ajuste aqui sem quebrar o outro) */
+.createFace {
+  left: 0;
+  opacity: 1;
+  z-index: 2;
 }
 
-.range { width: 100%; accent-color: #0f172a; cursor: pointer; height: 5px; }
-
-.numberInput {
-  width: 100%;
-  padding: 6px;
-  border-radius: 8px;
-  border: 2px solid #e2e8f0;
-  text-align: center;
-  font-weight: 700;
-  font-size: 13px;
-  color: #0f172a;
-  background: #fff;
-  outline: none;
+/* Lado de Visualização (Independente) */
+.viewFace {
+  left: 40%; /* Posicionado para aparecer quando o azul desliza para a esquerda */
+  opacity: 0;
+  z-index: 1;
 }
 
-.hintText {
-  font-size: 10.5px;
-  color: #64748b;
-  line-height: 1.4;
-  margin-top: 2px;
+/* Lógica da Animação */
+.isVisualizing .overlay {
+  transform: translateX(-150%);
 }
 
-.pillGroup { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; gap: 4px; }
-.pillBtn {
-  flex: 1;
-  padding: 7px;
-  border: none;
-  background: transparent;
-  border-radius: 8px;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: #64748b;
-  cursor: pointer;
+.isVisualizing .createFace {
+  opacity: 0;
+  transform: translateX(-40px);
 }
 
-.pillBtnActive { background: #0f172a; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+.isVisualizing .viewFace {
+  opacity: 1;
+  z-index: 5;
+  transform: translateX(0);
+}
 
-.cta {
+/* Overlay Escuro */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 60%;
+  width: 40%;
+  height: 100%;
   background: #0f172a;
-  color: #fff;
-  padding: 16px;
-  border-radius: 14px;
-  border: none;
-  font-weight: 800;
-  font-size: 14.5px;
-  width: 100%;
-  cursor: pointer;
+  z-index: 10;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
+  transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-.rightTitle { font-size: 20px; font-weight: 800; margin: 12px 0 8px; }
-.rightDesc { font-size: 13px; color: #94a3b8; line-height: 1.6; }
-
-@media (max-width: 950px) {
-  .card { grid-template-columns: 1fr; max-width: 480px; }
-  .rightCol { display: none; }
+.overlayContent {
+  text-align: center;
+  padding: 40px;
 }
+
+/* Formulário e Elementos */
+.formCol { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 24px; }
+.formColCenter { width: 100%; max-width: 380px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+
+.mainHeader { display: flex; align-items: center; gap: 14px; }
+.mainHeader h2 { font-size: 26px; font-weight: 800; color: #0f172a; margin: 0; }
+.iconCircleSmall { background: #f1f5f9; padding: 10px; border-radius: 12px; }
+
+.section { display: flex; flex-direction: column; gap: 12px; }
+.boxTitle { font-weight: 700; font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
+
+.inputWrapper { position: relative; width: 100%; }
+.input { width: 100%; padding: 16px; border-radius: 14px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 16px; outline: none; color: #1e293b; }
+.input:focus { border-color: #0f172a; background: #fff; }
+
+.innerGenerateBtn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; cursor: pointer; }
+
+/* Checkboxes Estilizados */
+.checkboxGroup { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.customCheck { display: flex; align-items: center; justify-content: center; padding: 12px; background: #fff; border: 2px solid #f1f5f9; border-radius: 12px; font-size: 13px; font-weight: 700; color: #64748b; cursor: pointer; }
+.hiddenCheckbox { display: none; }
+.hiddenCheckbox:checked + .customCheck { background: #0f172a; color: white; border-color: #0f172a; }
+
+/* Sliders */
+.controlRow { display: grid; grid-template-columns: 1fr 60px; align-items: center; gap: 12px; background: #f8fafc; padding: 8px 16px; border-radius: 12px; border: 1px solid #f1f5f9; }
+.range { accent-color: #0f172a; }
+.numberDisplay { text-align: center; font-weight: 800; color: #0f172a; }
+
+/* ESTILO MELHORADO PARA LIMITE DE ACESSOS */
+.viewLimitBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+}
+
+.viewLimitText { display: flex; flex-direction: column; }
+.limitTitle { font-weight: 800; font-size: 13px; color: #0f172a; }
+.limitSub { font-size: 10px; color: #94a3b8; }
+
+.counterControl { display: flex; align-items: center; background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 4px; }
+.counterBtn { border: none; background: transparent; width: 28px; height: 28px; cursor: pointer; font-weight: 800; color: #0f172a; }
+.counterInput { width: 30px; border: none; text-align: center; font-weight: 800; color: #0f172a; outline: none; }
+
+/* Botões e Pills */
+.pillGroup { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; }
+.pillBtn { flex: 1; padding: 8px; border: none; background: transparent; font-size: 11px; font-weight: 700; color: #64748b; cursor: pointer; }
+.pillBtnActive { background: white; color: #0f172a; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+.ctaButton { background: #0f172a; color: white; padding: 18px; border-radius: 16px; border: none; font-weight: 800; cursor: pointer; width: 100%; transition: 0.3s; }
+.ctaButton:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); }
+
+.dynamicLabel { background: #e2e8f0; padding: 2px 8px; border-radius: 20px; color: #0f172a; font-size: 10px; font-weight: 800; }
+.securityWarning { font-size: 12px; color: #94a3b8; margin-top: 10px; line-height: 1.5; }
+.rightTitle { font-size: 26px; font-weight: 800; margin: 20px 0 10px; }
+.rightDesc { font-size: 14px; opacity: 0.8; margin-bottom: 30px; }
+.switchButton { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: white; padding: 12px 30px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+.switchButton:hover { background: white; color: #0f172a; }

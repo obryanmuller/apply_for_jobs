@@ -20,7 +20,7 @@ export default function RootLayout({
         fontFamily: "sans-serif",
         minHeight: "100vh"
       }}>
-        <Header />
+       
         {children}
       </body>
     </html>

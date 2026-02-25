@@ -136,7 +136,7 @@ function MainContent() {
                   className={styles.input}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Digite ou use a varinha..."
+                  placeholder="Digite ou use a dado..."
                 />
 
                 <button

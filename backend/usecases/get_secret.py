@@ -19,7 +19,6 @@ def get_secret(event: dict):
     if status == "not_allowed":
         return json_response(410, {"message": "Link expirou ou atingiu o limite de visualizações"})
 
-    # item é ALL_NEW (consistente)
     secret = decrypt(item["ciphertext"])
 
     expires_at = int(item.get("expires_at", 0))

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { pwdApi } from "@/lib/api/pwd";
 import { PasswordRevealCard } from "@/components/password/PasswordRevealCard";
@@ -11,44 +11,67 @@ export default function Page() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<{
-    pwd: string;
-    expiration_date: number;
-    view_count: number;
-    pass_view_limit?: number;
-  } | null>(null);
+  const [data, setData] = useState<any>(null);
+
+  // useRef para garantir que a API seja chamada apenas UMA vez com sucesso
+  const fetchLock = useRef(false);
 
   useEffect(() => {
-    let alive = true;
+    // Se já temos dados ou erro, não precisamos buscar de novo
+    if (data || error || fetchLock.current) return;
 
-    (async () => {
+    let isMounted = true;
+    fetchLock.current = true;
+
+    const loadSecret = async () => {
       try {
         setLoading(true);
-        setError(null);
         const resp = await pwdApi.get(String(pwdId));
-        if (!alive) return;
-
-        setData(resp);
+        
+        if (isMounted) {
+          setData(resp);
+          setError(null);
+        }
       } catch (e: any) {
-        if (!alive) return;
-        setError(e?.message ?? "Senha indisponível/expirada.");
-        setData(null);
+        if (isMounted) {
+          setError(e.message || "Erro ao carregar segredo");
+          setData(null);
+        }
       } finally {
-        if (!alive) return;
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-    })();
+    };
+
+    loadSecret();
 
     return () => {
-      alive = false;
+      isMounted = false;
+      // Se desmontar sem ter completado (comum no Strict Mode), 
+      // liberamos a trava para a segunda montagem tentar buscar
+      if (!data && !error) {
+        fetchLock.current = false;
+      }
     };
-  }, [pwdId]);
+  }, [pwdId, data, error]);
 
-  const handleClose = () => router.push("/visualizar");
+  const handleClose = () => router.push("/?mode=view");
 
   return (
-    <main style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#757575" }}>
-      <PasswordRevealCard loading={loading} error={error} data={data} onClose={handleClose} />
+    <main style={{ 
+      display: "flex", 
+      justifyContent: "center", 
+      alignItems: "center", 
+      minHeight: "100vh", 
+      backgroundColor: "#f1f5f9" 
+    }}>
+      <PasswordRevealCard 
+        loading={loading} 
+        error={error} 
+        data={data} 
+        onClose={handleClose} 
+      />
     </main>
   );
 }

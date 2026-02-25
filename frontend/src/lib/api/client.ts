@@ -16,7 +16,17 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(text || res.statusText || `HTTP ${res.status}`);
+    let errorMessage = text;
+
+    try {
+      // Tenta extrair a mensagem amigável do JSON de erro
+      const errorJson = JSON.parse(text);
+      errorMessage = errorJson.message || errorMessage;
+    } catch {
+      errorMessage = text || res.statusText || `HTTP ${res.status}`;
+    }
+
+    throw new Error(errorMessage);
   }
 
   return res.json() as Promise<T>;

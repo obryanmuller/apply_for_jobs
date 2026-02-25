@@ -1,75 +1,59 @@
 "use client";
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { extractTokenFromInput } from "@/lib/utils/token";
-import styles from "./TokenLookupCard.module.css";
+import styles from "./TokenCreatedModal.module.css";
 
-export function TokenLookupCard() {
-  const router = useRouter();
-  const [tokenInput, setTokenInput] = useState("");
+export function TokenCreatedModal({ open, url, expiresLabel, viewLimit, onClose, onCopy, onViewNow }: any) {
+  const [copied, setCopied] = useState(false);
+  if (!open) return null;
 
-  const go = () => {
-    const token = extractTokenFromInput(tokenInput);
-    if (!token) {
-      alert("Token ou URL inválida. Por favor, verifique o código informado.");
-      return;
-    }
-    router.push(`/visualizar/${encodeURIComponent(token)}`);
+  const handleCopy = () => {
+    onCopy();
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <main className={styles.main}>
-      <div className={styles.card}>
-        <div className={styles.leftCol}>
-          <div className={styles.logoWrap}>
-            {/* Logo atualizada para o tema claro da coluna esquerda */}
-            <Image 
-              src="/logototvs.png" 
-              alt="TOTVS" 
-              width={150} 
-              height={50} 
-              style={{ objectFit: "contain" }} 
-            />
-          </div>
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.headerBar}>
+          <div className={styles.brandCircle} />
+          <button onClick={onClose} className={styles.closeButton}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
 
-          <div className={styles.formCol}>
-            <div style={{ textAlign: "left" }}>
-              <label className={styles.label}>Token de acesso</label>
+        <div className={styles.content}>
+          <h2 className={styles.title}>Token Criado</h2>
 
-              <input
-                type="text"
-                value={tokenInput}
-                onChange={(e) => setTokenInput(e.target.value)}
-                placeholder="Insira o token ou cole a URL"
-                className={styles.input}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") go();
-                }}
-              />
-            </div>
-
-            <button onClick={go} className={styles.ctaButton}>
-              Visualizar Segredo
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14m-7-7l7 7-7 7"/>
-              </svg>
+          <div className={styles.urlContainer}>
+            <div className={styles.urlText}>{url}</div>
+            <button onClick={handleCopy} className={styles.copyIconButton}>
+              {copied ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="2.5"><rect x="9" y="9" width="10" height="10" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1" /></svg>
+              )}
             </button>
           </div>
-        </div>
 
-        <div className={styles.rightWrap}>
-          <Image 
-            src="/iconhomewhite.png" 
-            alt="Segurança" 
-            width={250} 
-            height={250} 
-            priority 
-            style={{ objectFit: "contain" }} 
-          />
+          <div className={styles.metaGroup}>
+            <div className={styles.metaItem}>
+              <span className={styles.metaLabel}>Expiração</span>
+              <span className={styles.metaValue}>{expiresLabel}</span>
+            </div>
+            <div className={styles.metaItem}>
+              <span className={styles.metaLabel}>Visualizações</span>
+              <span className={styles.metaValue}>{viewLimit} acessos</span>
+            </div>
+          </div>
+
+          <button onClick={onViewNow} className={styles.viewNowButton}>
+            Visualizar agora 
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{marginLeft: 8}}><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+          </button>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

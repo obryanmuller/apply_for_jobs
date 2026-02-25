@@ -5,6 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { pwdApi } from "@/lib/api/pwd";
 import { PasswordRevealCard } from "@/components/password/PasswordRevealCard";
 
+// Mapa global para evitar chamadas duplicadas da API em Strict Mode
+const globalFetchLocks = new Map<string, boolean>();
+
 export default function Page() {
   const { pwdId } = useParams<{ pwdId: string }>();
   const router = useRouter();
@@ -13,15 +16,13 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<any>(null);
 
-  // useRef para garantir que a API seja chamada apenas UMA vez com sucesso
-  const fetchLock = useRef(false);
-
   useEffect(() => {
-    // Se já temos dados ou erro, não precisamos buscar de novo
-    if (data || error || fetchLock.current) return;
+    // Verifica se já estamos buscando este pwdId
+    if (!pwdId || globalFetchLocks.get(pwdId)) return;
+
+    globalFetchLocks.set(pwdId, true);
 
     let isMounted = true;
-    fetchLock.current = true;
 
     const loadSecret = async () => {
       try {
@@ -48,13 +49,8 @@ export default function Page() {
 
     return () => {
       isMounted = false;
-      // Se desmontar sem ter completado (comum no Strict Mode), 
-      // liberamos a trava para a segunda montagem tentar buscar
-      if (!data && !error) {
-        fetchLock.current = false;
-      }
     };
-  }, [pwdId, data, error]);
+  }, [pwdId]);
 
   const handleClose = () => router.push("/?mode=view");
 

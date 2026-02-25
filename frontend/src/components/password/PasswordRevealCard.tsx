@@ -14,7 +14,6 @@ export function PasswordRevealCard({ loading, error, data, onClose }: any) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // 1. PRIORIDADE: DADO (Se o dado existe, mostra o segredo imediatamente)
   if (data) {
     return (
       <div className={`${styles.shell} ${styles.appear}`}>
@@ -50,7 +49,6 @@ export function PasswordRevealCard({ loading, error, data, onClose }: any) {
     );
   }
 
-  // 2. PRIORIDADE: ERRO (Se falhou, mostra o erro e para o loading)
   if (error) {
     return (
       <div className={`${styles.shell} ${styles.appear}`}>
@@ -67,7 +65,6 @@ export function PasswordRevealCard({ loading, error, data, onClose }: any) {
     );
   }
 
-  // 3. CARREGAMENTO (Apenas se não houver dado nem erro)
   if (loading) {
     return (
       <div className={styles.shell}>

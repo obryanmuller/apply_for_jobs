@@ -6,7 +6,7 @@ if (!API_BASE) {
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds timeout
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
 
   try {
     const res = await fetch(`${API_BASE}${path}`, {
@@ -26,7 +26,6 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
       let errorMessage = text;
 
       try {
-        // Tenta extrair a mensagem amigável do JSON de erro
         const errorJson = JSON.parse(text);
         errorMessage = errorJson.message || errorMessage;
       } catch {

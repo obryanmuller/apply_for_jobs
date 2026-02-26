@@ -26,10 +26,12 @@ function MainContent() {
   const [useDigits, setUseDigits] = useState(true);
   const [useSymbols, setUseSymbols] = useState(true);
   const [password, setPassword] = useState("");
-  const [length, setLength] = useState(12);
-  const [expiresValue, setExpiresValue] = useState(10);
+  
+  const [length, setLength] = useState<number | "">(12);
+  const [expiresValue, setExpiresValue] = useState<number | "">(10);
   const [expiresUnit, setExpiresUnit] = useState<ExpiresUnit>("Minutos");
-  const [viewLimit, setViewLimit] = useState(1);
+  const [viewLimit, setViewLimit] = useState<number | "">(1);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [created, setCreated] = useState<{ pwdId: string; url: string } | null>(null);
 
@@ -50,31 +52,47 @@ function MainContent() {
   const unitOptions: ExpiresUnit[] = ["Segundos", "Minutos", "Dias"];
 
   const handleGeneratePreview = () => {
-    if (!canGenerate) {
-      setConfigError("Selecione ao menos um tipo de caractere para gerar.");
-      return;
-    }
+    if (!canGenerate) return setConfigError("Selecione ao menos um tipo de caractere.");
+    
+    const len = Number(length);
+    if (!length || len < 4) return setConfigError("O tamanho mínimo para gerar é 4.");
+    if (len > 128) return setConfigError("O tamanho máximo permitido é 128.");
+    
     setConfigError("");
-    setPassword(generatePassword({ useLetters, useDigits, useSymbols, length }));
+    setPassword(generatePassword({ useLetters, useDigits, useSymbols, length: len }));
   };
 
   const handleSave = async () => {
-    if (!canGenerate && !hasTypedPassword) {
-      setConfigError("Defina uma senha ou selecione opções de customização.");
-      return;
+    const exp = Number(expiresValue);
+    const len = Number(length);
+    const limit = Number(viewLimit);
+
+    if (!canGenerate && !hasTypedPassword) return setConfigError("Defina uma senha ou parametrize a geração.");
+    if (!expiresValue || exp < 1) return setConfigError("O tempo de destruição deve ser no mínimo 1.");
+    if (exp > 999) return setConfigError("O tempo de destruição é muito alto.");
+    
+    if (!viewLimit || limit < 1) return setConfigError("O limite de acessos deve ser no mínimo 1.");
+    if (limit > 100) return setConfigError("O limite máximo de acessos permitido é 100.");
+
+    if (!hasTypedPassword) {
+      if (!length || len < 4) return setConfigError("O tamanho da senha deve ser no mínimo 4.");
+      if (len > 128) return setConfigError("O tamanho máximo permitido é 128.");
     }
+
     try {
       setIsSubmitting(true);
       setConfigError("");
+
       const payload = {
         ...(hasTypedPassword ? { sended_password: password.trim() } : {}),
         use_letters: useLetters,
         use_digits: useDigits,
         use_punctuation: useSymbols,
-        pass_length: length,
-        pass_view_limit: Number(viewLimit),
-        expiration_in_seconds: toExpirationSeconds(expiresValue, expiresUnit),
+        pass_length: len || 12,
+        pass_view_limit: limit,
+        expiration_in_seconds: toExpirationSeconds(exp, expiresUnit),
       };
+
       const { pwdId } = await pwdApi.create(payload);
       setCreated({ pwdId, url: buildShareUrl(pwdId) });
     } catch {
@@ -98,8 +116,6 @@ function MainContent() {
   return (
     <main className={styles.main}>
       <div className={`${styles.card} ${isVisualizing ? styles.isVisualizing : ""}`}>
-        
-        {/* Face Criação */}
         <div className={`${styles.sideFace} ${styles.createFace}`}>
           <div className={styles.formCol}>
             <header className={styles.mainHeader}>
@@ -132,7 +148,7 @@ function MainContent() {
             {!hasTypedPassword && (
               <section className={styles.section}>
                 <label className={styles.boxTitle}>
-                  Customização <span className={styles.dynamicLabel}>{length} CARACTERES</span>
+                  Customização <span className={styles.dynamicLabel}>{length || 0} CARACTERES</span>
                 </label>
                 <div className={styles.checkboxGroup}>
                   {charsetOptions.map((opt) => (
@@ -154,12 +170,17 @@ function MainContent() {
                   <input
                     type="range"
                     min={4}
-                    max={64}
-                    value={length}
+                    max={128}
+                    value={length || 4}
                     onChange={(e) => setLength(Number(e.target.value))}
                     className={styles.range}
                   />
-                  <div className={styles.numberDisplay}>{length}</div>
+                  <input 
+                    type="number"
+                    className={styles.numberInput}
+                    value={length}
+                    onChange={(e) => setLength(e.target.value === "" ? "" : Number(e.target.value))}
+                  />
                 </div>
               </section>
             )}
@@ -168,7 +189,7 @@ function MainContent() {
 
             <section className={styles.section}>
               <label className={styles.boxTitle}>
-                Destruição <span className={styles.dynamicLabel}>{expiresValue} {expiresUnit}</span>
+                Destruição <span className={styles.dynamicLabel}>{expiresValue || 0} {expiresUnit}</span>
               </label>
               <div className={styles.pillGroup}>
                 {unitOptions.map((u) => (
@@ -185,11 +206,16 @@ function MainContent() {
               <div className={styles.controlRow}>
                 <input
                   type="range" min={1} max={60}
-                  value={expiresValue}
+                  value={expiresValue || 1}
                   onChange={(e) => setExpiresValue(Number(e.target.value))}
                   className={styles.range}
                 />
-                <div className={styles.numberDisplay}>{expiresValue}</div>
+                <input 
+                    type="number"
+                    className={styles.numberInput}
+                    value={expiresValue}
+                    onChange={(e) => setExpiresValue(e.target.value === "" ? "" : Number(e.target.value))}
+                />
               </div>
               <div className={styles.viewLimitBox}>
                 <div className={styles.viewLimitText}>
@@ -197,9 +223,14 @@ function MainContent() {
                   <span className={styles.limitSub}>Vezes que o link pode ser aberto</span>
                 </div>
                 <div className={styles.counterControl}>
-                  <button type="button" onClick={() => setViewLimit((p) => Math.max(1, p - 1))} className={styles.counterBtn}>-</button>
-                  <input type="number" value={viewLimit} readOnly className={styles.counterInput} />
-                  <button type="button" onClick={() => setViewLimit((p) => p + 1)} className={styles.counterBtn}>+</button>
+                  <button type="button" onClick={() => setViewLimit((p) => Math.max(1, Number(p) - 1))} className={styles.counterBtn}>-</button>
+                  <input 
+                    type="number" 
+                    value={viewLimit} 
+                    onChange={(e) => setViewLimit(e.target.value === "" ? "" : Number(e.target.value))}
+                    className={styles.counterInput} 
+                  />
+                  <button type="button" onClick={() => setViewLimit((p) => Number(p) + 1)} className={styles.counterBtn}>+</button>
                 </div>
               </div>
             </section>
@@ -208,14 +239,12 @@ function MainContent() {
               {isSubmitting ? "CRIANDO..." : "GERAR LINK SEGURO"}
             </button>
 
-            {/* BOTÃO MOBILE AQUI */}
             <button type="button" onClick={toggleMode} className={styles.mobileOnlyLink}>
               Já tenho um token para visualizar
             </button>
           </div>
         </div>
 
-        {/* Face Visualização */}
         <div className={`${styles.sideFace} ${styles.viewFace}`}>
           <div className={styles.formColCenter}>
             <Image src="/logototvs.png" alt="TOTVS" width={160} height={60} priority />
@@ -238,7 +267,6 @@ function MainContent() {
               Visualizar Segredo →
             </button>
 
-            {/* BOTÃO MOBILE AQUI */}
             <button type="button" onClick={toggleMode} className={styles.mobileOnlyLink}>
               Quero gerar um novo link seguro
             </button>
@@ -267,7 +295,7 @@ function MainContent() {
         open={!!created}
         url={created?.url ?? ""}
         expiresLabel={expiresLabel}
-        viewLimit={viewLimit}
+        viewLimit={Number(viewLimit)}
         onClose={() => setCreated(null)}
         onCopy={async () => { if (created?.url) await navigator.clipboard.writeText(created.url); }}
         onViewNow={() => { if (created?.pwdId) router.push(`/visualizar/${encodeURIComponent(created.pwdId)}`); }}

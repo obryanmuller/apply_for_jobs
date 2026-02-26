@@ -19,7 +19,6 @@ def generate_password(use_letters: bool, use_digits: bool, use_punctuation: bool
     if not pools:
         raise ValueError("Selecione ao menos um tipo de caractere")
 
-    # 1 de cada pool habilitado (diversidade mínima)
     password_chars = [secrets.choice(pool) for pool in pools]
 
     alphabet = "".join(pools)

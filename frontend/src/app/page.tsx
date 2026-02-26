@@ -9,6 +9,7 @@ import { pwdApi } from "@/lib/api/pwd";
 import { buildShareUrl, extractTokenFromInput } from "@/lib/utils/token";
 import { ExpiresUnit, toExpirationSeconds } from "@/lib/utils/time";
 import { generatePassword } from "@/lib/utils/password";
+import { ActionErrorModal } from "@/components/ui/ActionErrorModal";
 import { TokenCreatedModal } from "@/components/password/TokenCreatedModal";
 
 function MainContent() {
@@ -22,19 +23,22 @@ function MainContent() {
     if (searchParams.get("mode") === "view") setMode("view");
   }, [searchParams]);
 
+  // Estados do formulário
   const [useLetters, setUseLetters] = useState(true);
   const [useDigits, setUseDigits] = useState(true);
   const [useSymbols, setUseSymbols] = useState(true);
   const [password, setPassword] = useState("");
-  
   const [length, setLength] = useState<number | "">(12);
   const [expiresValue, setExpiresValue] = useState<number | "">(10);
   const [expiresUnit, setExpiresUnit] = useState<ExpiresUnit>("Minutos");
   const [viewLimit, setViewLimit] = useState<number | "">(1);
-  
+
+  // Estados de feedback e controle
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [created, setCreated] = useState<{ pwdId: string; url: string } | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Estados de validação local
   const [tokenInput, setTokenInput] = useState("");
   const [tokenError, setTokenError] = useState("");
   const [configError, setConfigError] = useState("");
@@ -55,8 +59,11 @@ function MainContent() {
     if (!canGenerate) return setConfigError("Selecione ao menos um tipo de caractere.");
     
     const len = Number(length);
-    if (!length || len < 4) return setConfigError("O tamanho mínimo para gerar é 4.");
+
+    if (!Number.isFinite(len) || !Number.isInteger(len)) return setConfigError("Tamanho inválido.");
+    if (len < 8) return setConfigError("O tamanho mínimo para gerar é 8.");
     if (len > 128) return setConfigError("O tamanho máximo permitido é 128.");
+    return setConfigError("O tamanho máximo permitido é 128.");
     
     setConfigError("");
     setPassword(generatePassword({ useLetters, useDigits, useSymbols, length: len }));
@@ -67,21 +74,24 @@ function MainContent() {
     const len = Number(length);
     const limit = Number(viewLimit);
 
+    // Validações de interface (Frontend Guard)
     if (!canGenerate && !hasTypedPassword) return setConfigError("Defina uma senha ou parametrize a geração.");
     if (!expiresValue || exp < 1) return setConfigError("O tempo de destruição deve ser no mínimo 1.");
     if (exp > 999) return setConfigError("O tempo de destruição é muito alto.");
-    
     if (!viewLimit || limit < 1) return setConfigError("O limite de acessos deve ser no mínimo 1.");
     if (limit > 100) return setConfigError("O limite máximo de acessos permitido é 100.");
 
     if (!hasTypedPassword) {
-      if (!length || len < 4) return setConfigError("O tamanho da senha deve ser no mínimo 4.");
-      if (len > 128) return setConfigError("O tamanho máximo permitido é 128.");
+      if (!Number.isFinite(len) || !Number.isInteger(len)) 
+        return setConfigError("Tamanho inválido.");
+      if (len < 8) return setConfigError("O tamanho mínimo para gerar é 8.");
+        if (len > 128) return setConfigError("O tamanho máximo permitido é 128.");
     }
 
     try {
       setIsSubmitting(true);
       setConfigError("");
+      setErrorMessage(null);
 
       const payload = {
         ...(hasTypedPassword ? { sended_password: password.trim() } : {}),
@@ -95,8 +105,9 @@ function MainContent() {
 
       const { pwdId } = await pwdApi.create(payload);
       setCreated({ pwdId, url: buildShareUrl(pwdId) });
-    } catch {
-      alert("Erro ao criar link seguro.");
+    } catch (err: any) {
+      const msg = err.response?.data?.message || "O servidor de segurança não respondeu. Verifique sua conexão e tente novamente.";
+      setErrorMessage(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -116,6 +127,7 @@ function MainContent() {
   return (
     <main className={styles.main}>
       <div className={`${styles.card} ${isVisualizing ? styles.isVisualizing : ""}`}>
+        {/* FACE DE CRIAÇÃO */}
         <div className={`${styles.sideFace} ${styles.createFace}`}>
           <div className={styles.formCol}>
             <header className={styles.mainHeader}>
@@ -169,9 +181,9 @@ function MainContent() {
                 <div className={styles.controlRow}>
                   <input
                     type="range"
-                    min={4}
+                    min={8}
                     max={128}
-                    value={length || 4}
+                    value={length || 8}
                     onChange={(e) => setLength(Number(e.target.value))}
                     className={styles.range}
                   />
@@ -245,6 +257,7 @@ function MainContent() {
           </div>
         </div>
 
+        {/* FACE DE VISUALIZAÇÃO */}
         <div className={`${styles.sideFace} ${styles.viewFace}`}>
           <div className={styles.formColCenter}>
             <Image src="/logototvs.png" alt="TOTVS" width={160} height={60} priority />
@@ -277,6 +290,7 @@ function MainContent() {
           </div>
         </div>
 
+        {/* OVERLAY LATERAL (DESKTOP) */}
         <aside className={styles.overlay}>
           <div className={styles.overlayContent}>
             <Image src="/iconhomewhite.png" alt="Icon" width={90} height={90} />
@@ -291,6 +305,7 @@ function MainContent() {
         </aside>
       </div>
 
+      {/* MODAL DE SUCESSO */}
       <TokenCreatedModal
         open={!!created}
         url={created?.url ?? ""}
@@ -299,6 +314,12 @@ function MainContent() {
         onClose={() => setCreated(null)}
         onCopy={async () => { if (created?.url) await navigator.clipboard.writeText(created.url); }}
         onViewNow={() => { if (created?.pwdId) router.push(`/visualizar/${encodeURIComponent(created.pwdId)}`); }}
+      />
+
+      <ActionErrorModal 
+        open={!!errorMessage}
+        message={errorMessage ?? ""}
+        onClose={() => setErrorMessage(null)}
       />
     </main>
   );

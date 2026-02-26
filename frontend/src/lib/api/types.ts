@@ -16,8 +16,6 @@ export type CreatePwdResponse = {
 
 export type GetPwdResponse = {
   pwd: string;
-  expiration_date: number; // epoch seconds
-  view_count: number; // já consumidas
-  // opcional, se você quiser retornar isso no backend depois:
-  pass_view_limit?: number;
+  expiration_date: number; 
+  view_count: number;
 };

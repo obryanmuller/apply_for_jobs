@@ -1,145 +1,586 @@
+/* =========================================================
+   LAYOUT PRINCIPAL
+========================================================= */
+
 .main {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: radial-gradient(circle at top left, #f8fafc, #e2e8f0, #cbd5e1);
-  font-family: 'Inter', sans-serif;
   padding: 20px;
+
+  font-family: "Inter", sans-serif;
+  background: radial-gradient(circle at top left, #f8fafc, #e2e8f0, #cbd5e1);
 }
 
 .card {
+  position: relative;
   width: 100%;
   max-width: 1000px;
   height: 660px;
+
   background: #ffffff;
   border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-  position: relative;
   overflow: hidden;
+
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
   transition: all 0.5s ease;
 }
+
+/* =========================================================
+   FACES (DESKTOP)
+========================================================= */
 
 .sideFace {
   position: absolute;
   top: 0;
+
   width: 60%;
   height: 100%;
   padding: 40px 60px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transition: all 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+
   box-sizing: border-box;
+  transition: all 0.6s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-.createFace { left: 0; opacity: 1; z-index: 2; }
-.viewFace { left: 40%; opacity: 0; z-index: 1; }
+.createFace {
+  left: 0;
+  opacity: 1;
+  z-index: 2;
+}
 
-.isVisualizing .overlay { transform: translateX(-150%); }
-.isVisualizing .createFace { opacity: 0; transform: translateX(-40px); }
-.isVisualizing .viewFace { opacity: 1; z-index: 5; transform: translateX(0); }
+.viewFace {
+  left: 40%;
+  opacity: 0;
+  z-index: 1;
+}
 
 .overlay {
   position: absolute;
   top: 0;
   left: 60%;
+
   width: 40%;
   height: 100%;
-  background: #0f172a;
-  z-index: 10;
-  color: white;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  color: #ffffff;
+  background: #0f172a;
+  z-index: 10;
+
   transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-.overlayContent { text-align: center; padding: 40px; width: 100%; }
-.formCol { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 20px; }
-.formColCenter { width: 100%; max-width: 380px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
-
-.mainHeader h2 { font-size: 26px; font-weight: 800; color: #0f172a; margin: 0; }
-.section { display: flex; flex-direction: column; gap: 12px; }
-.boxTitle { font-weight: 700; font-size: 11px; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
-
-.inputWrapper { position: relative; width: 100%; }
-.input { width: 100%; padding: 16px; border-radius: 14px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 16px; outline: none; color: #1e293b; box-sizing: border-box; }
-.input:focus { border-color: #0f172a; background: #fff; }
-
-.innerGenerateBtn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; cursor: pointer; }
-
-.checkboxGroup { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.customCheck { display: flex; align-items: center; justify-content: center; padding: 12px; background: #fff; border: 2px solid #f1f5f9; border-radius: 12px; font-size: 13px; font-weight: 700; color: #64748b; cursor: pointer; }
-.hiddenCheckbox { display: none; }
-.hiddenCheckbox:checked + .customCheck { background: #0f172a; color: white; border-color: #0f172a; }
-
-.controlRow { display: grid; grid-template-columns: 1fr 60px; align-items: center; gap: 12px; background: #f8fafc; padding: 8px 16px; border-radius: 12px; border: 1px solid #f1f5f9; }
-.range { accent-color: #0f172a; cursor: pointer; }
-.numberDisplay { text-align: center; font-weight: 800; color: #0f172a; }
-
-.viewLimitBox { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 16px; border-radius: 16px; border: 1px solid #f1f5f9; }
-.viewLimitText { display: flex; flex-direction: column; }
-.limitTitle { font-weight: 800; font-size: 13px; color: #0f172a; }
-.limitSub { font-size: 10px; color: #94a3b8; }
-
-.counterControl { display: flex; align-items: center; background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 4px; }
-.counterBtn { border: none; background: transparent; width: 28px; height: 28px; cursor: pointer; font-weight: 800; color: #0f172a; }
-.counterInput { width: 30px; border: none; text-align: center; font-weight: 800; color: #0f172a; outline: none; }
-
-.pillGroup { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; }
-.pillBtn { flex: 1; padding: 8px; border: none; background: transparent; font-size: 11px; font-weight: 700; color: #64748b; cursor: pointer; }
-.pillBtnActive { background: #0f172a; color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-.ctaButton { background: #0f172a; color: white; padding: 18px; border-radius: 16px; border: none; font-weight: 800; cursor: pointer; width: 100%; transition: 0.3s; }
-.ctaButton:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); }
-
-.errorLabel { color: #ef4444; font-size: 12px; font-weight: 600; margin-top: -8px; display: block; }
-.dynamicLabel { background: #e2e8f0; padding: 2px 8px; border-radius: 20px; color: #0f172a; font-size: 10px; font-weight: 800; }
-.securityWarning { font-size: 12px; color: #94a3b8; margin-top: 10px; line-height: 1.5; }
-.rightTitle { font-size: 26px; font-weight: 800; margin: 20px 0 10px; }
-.rightDesc { font-size: 14px; opacity: 0.8; margin-bottom: 30px; }
-.switchButton { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: white; padding: 12px 30px; border-radius: 12px; font-weight: 700; cursor: pointer; }
-
-.mobileOnlyLink {
-  display: none;
-  background: none;
-  border: none;
-  color: #64748b;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
-  margin-top: 10px;
-  padding: 10px;
+.overlayContent {
   width: 100%;
+  padding: 40px;
   text-align: center;
 }
 
-/* BREAKPOINT IPHONE 12 PRO / MOBILE */
+.isVisualizing .overlay {
+  transform: translateX(-150%);
+}
+
+.isVisualizing .createFace {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.isVisualizing .viewFace {
+  opacity: 1;
+  z-index: 5;
+  transform: translateX(0);
+}
+
+/* =========================================================
+   FORM STRUCTURE
+========================================================= */
+
+.formCol {
+  width: 100%;
+  max-width: 440px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formColCenter {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+
+  text-align: center;
+}
+
+.mainHeader h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.boxTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  color: #0f172a;
+}
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 16px;
+
+  font-size: 16px;
+  color: #1e293b;
+
+  background: #f8fafc;
+  border: 2px solid #f1f5f9;
+  border-radius: 14px;
+  outline: none;
+
+  box-sizing: border-box;
+}
+
+.input:focus {
+  background: #ffffff;
+  border-color: #0f172a;
+}
+
+.innerGenerateBtn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+
+  width: 34px;
+  height: 34px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+/* =========================================================
+   CHECKBOX GROUP
+========================================================= */
+
+.checkboxGroup {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.hiddenCheckbox {
+  display: none;
+}
+
+.customCheck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px;
+
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+
+  background: #ffffff;
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+
+  cursor: pointer;
+}
+
+.hiddenCheckbox:checked + .customCheck {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #ffffff;
+}
+
+/* =========================================================
+   CONTROL ROW (SLIDER + NUMBER)
+========================================================= */
+
+.controlRow {
+  display: grid;
+  grid-template-columns: 1fr 60px;
+  align-items: center;
+  gap: 12px;
+
+  padding: 8px 16px;
+
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+}
+
+.range {
+  accent-color: #0f172a;
+  cursor: pointer;
+}
+
+.numberInput {
+  width: 60px;
+  padding: 6px 0;
+
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  color: #0f172a;
+
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  outline: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+.numberInput:focus {
+  border-color: #0f172a;
+}
+
+.numberInput::-webkit-inner-spin-button,
+.numberInput::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+/* =========================================================
+   VIEW LIMIT
+========================================================= */
+
+.viewLimitBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 16px;
+
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+}
+
+.viewLimitText {
+  display: flex;
+  flex-direction: column;
+}
+
+.limitTitle {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.limitSub {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.counterControl {
+  display: flex;
+  align-items: center;
+
+  padding: 4px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.counterBtn {
+  width: 28px;
+  height: 28px;
+
+  border: none;
+  background: transparent;
+
+  font-weight: 800;
+  color: #0f172a;
+
+  cursor: pointer;
+}
+
+.counterInput {
+  width: 40px;
+
+  text-align: center;
+  font-weight: 800;
+  color: #0f172a;
+
+  border: none;
+  outline: none;
+  background: transparent;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+.counterInput::-webkit-inner-spin-button,
+.counterInput::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+/* =========================================================
+   PILLS (TIME BUTTONS)
+========================================================= */
+
+.pillGroup {
+  display: flex;
+  padding: 4px;
+
+  background: #f1f5f9;
+  border-radius: 12px;
+}
+
+.pillBtn {
+  flex: 1;
+  padding: 8px;
+
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+
+  background: transparent;
+  border: none;
+
+  cursor: pointer;
+}
+
+.pillBtnActive {
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.ctaButton {
+  width: 100%;
+  padding: 18px;
+
+  font-weight: 800;
+  color: #ffffff;
+
+  background: #0f172a;
+  border: none;
+  border-radius: 16px;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+.ctaButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.switchButton {
+  padding: 12px 30px;
+
+  font-weight: 700;
+  color: #ffffff;
+
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+
+  cursor: pointer;
+}
+
+.switchButton:hover {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+/* =========================================================
+   LABELS & MESSAGES
+========================================================= */
+
+.errorLabel {
+  display: block;
+  margin-top: -8px;
+
+  font-size: 12px;
+  font-weight: 600;
+  color: #ef4444;
+
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.dynamicLabel {
+  padding: 2px 8px;
+
+  font-size: 10px;
+  font-weight: 800;
+  color: #0f172a;
+
+  background: #e2e8f0;
+  border-radius: 20px;
+}
+
+.securityWarning {
+  margin-top: 10px;
+
+  font-size: 12px;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+.rightTitle {
+  margin: 20px 0 10px;
+
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.rightDesc {
+  margin-bottom: 30px;
+
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+.mobileOnlyLink {
+  display: none;
+
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: underline;
+
+  background: none;
+  border: none;
+  color: #0f172a;
+
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
-  .card { height: auto; background: transparent; box-shadow: none; overflow: visible; }
-  .overlay { display: none; }
-  
+  .main {
+    align-items: center;
+    padding: 10px;
+  }
+
+  .card {
+    height: auto;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    margin: auto;
+  }
+
+  .overlay {
+    display: none;
+  }
+
   .sideFace {
     position: relative;
     width: 100%;
     height: auto;
     padding: 30px 15px;
+
     background: #ffffff;
     border-radius: 24px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+
     left: 0 !important;
     opacity: 1 !important;
     transform: none !important;
   }
 
-  .viewFace { display: none; }
-  .isVisualizing .viewFace { display: flex; }
-  .isVisualizing .createFace { display: none; }
+  .viewFace {
+    display: none;
+  }
 
-  .mobileOnlyLink { display: block; }
-  .formColCenter { max-width: 100%; gap: 20px; }
-  .checkboxGroup { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .customCheck { padding: 12px 5px; font-size: 12px; }
+  .isVisualizing .viewFace {
+    display: flex;
+  }
+
+  .isVisualizing .createFace {
+    display: none;
+  }
+
+  .mobileOnlyLink {
+    display: block;
+  }
+
+  .formColCenter {
+    max-width: 100%;
+    gap: 20px;
+  }
+
+  .checkboxGroup {
+    gap: 8px;
+  }
+
+  .customCheck {
+    padding: 12px 5px;
+    font-size: 12px;
+  }
 }

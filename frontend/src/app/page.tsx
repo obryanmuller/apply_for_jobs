@@ -11,72 +11,61 @@ import { ExpiresUnit, toExpirationSeconds } from "@/lib/utils/time";
 import { generatePassword } from "@/lib/utils/password";
 import { TokenCreatedModal } from "@/components/password/TokenCreatedModal";
 
-type Mode = "create" | "view";
-
 function MainContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [mode, setMode] = useState<Mode>("create");
+  const [mode, setMode] = useState<"create" | "view">("create");
   const isVisualizing = mode === "view";
 
   useEffect(() => {
     if (searchParams.get("mode") === "view") setMode("view");
   }, [searchParams]);
 
-  // Config / Form
   const [useLetters, setUseLetters] = useState(true);
   const [useDigits, setUseDigits] = useState(true);
   const [useSymbols, setUseSymbols] = useState(true);
-
   const [password, setPassword] = useState("");
   const [length, setLength] = useState(12);
-
   const [expiresValue, setExpiresValue] = useState(10);
   const [expiresUnit, setExpiresUnit] = useState<ExpiresUnit>("Minutos");
   const [viewLimit, setViewLimit] = useState(1);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [created, setCreated] = useState<{ pwdId: string; url: string } | null>(null);
 
-  // View
   const [tokenInput, setTokenInput] = useState("");
   const [tokenError, setTokenError] = useState("");
+  const [configError, setConfigError] = useState("");
 
   const canGenerate = useLetters || useDigits || useSymbols;
   const hasTypedPassword = password.trim().length > 0;
-  const isButtonDisabled = !canGenerate && !hasTypedPassword;
+  const expiresLabel = useMemo(() => `${expiresValue} ${expiresUnit}`, [expiresValue, expiresUnit]);
 
-  const expiresLabel = useMemo(
-    () => `${expiresValue} ${expiresUnit}`,
-    [expiresValue, expiresUnit]
-  );
+  const charsetOptions = [
+    { id: "l", label: "ABC", checked: useLetters, set: setUseLetters },
+    { id: "d", label: "123", checked: useDigits, set: setUseDigits },
+    { id: "s", label: "#$!", checked: useSymbols, set: setUseSymbols },
+  ];
 
-  const charsetOptions = useMemo(
-    () => [
-      { id: "l", label: "ABC", checked: useLetters, set: setUseLetters },
-      { id: "d", label: "123", checked: useDigits, set: setUseDigits },
-      { id: "s", label: "#$!", checked: useSymbols, set: setUseSymbols },
-    ],
-    [useLetters, useDigits, useSymbols]
-  );
-
-  const unitOptions = useMemo(
-    () => ["Segundos", "Minutos", "Dias"] as const,
-    []
-  );
+  const unitOptions: ExpiresUnit[] = ["Segundos", "Minutos", "Dias"];
 
   const handleGeneratePreview = () => {
-    if (!canGenerate) return;
+    if (!canGenerate) {
+      setConfigError("Selecione ao menos um tipo de caractere para gerar.");
+      return;
+    }
+    setConfigError("");
     setPassword(generatePassword({ useLetters, useDigits, useSymbols, length }));
   };
 
   const handleSave = async () => {
-    if (isSubmitting || isButtonDisabled) return;
-
+    if (!canGenerate && !hasTypedPassword) {
+      setConfigError("Defina uma senha ou selecione opções de customização.");
+      return;
+    }
     try {
       setIsSubmitting(true);
-
+      setConfigError("");
       const payload = {
         ...(hasTypedPassword ? { sended_password: password.trim() } : {}),
         use_letters: useLetters,
@@ -86,7 +75,6 @@ function MainContent() {
         pass_view_limit: Number(viewLimit),
         expiration_in_seconds: toExpirationSeconds(expiresValue, expiresUnit),
       };
-
       const { pwdId } = await pwdApi.create(payload);
       setCreated({ pwdId, url: buildShareUrl(pwdId) });
     } catch {
@@ -98,28 +86,19 @@ function MainContent() {
 
   const handleGoToToken = () => {
     const raw = tokenInput.trim();
-
-    if (!raw) {
-      setTokenError("Informe o token ou cole a URL.");
-      return;
-    }
-
+    if (!raw) return setTokenError("Informe o token ou cole a URL.");
     const token = extractTokenFromInput(raw);
-
-    if (!token) {
-      setTokenError("Token inválido.");
-      return;
-    }
-
+    if (!token) return setTokenError("Token inválido.");
     setTokenError("");
     router.push(`/visualizar/${encodeURIComponent(token)}`);
   };
 
-  const toggleMode = () => setMode(isVisualizing ? "create" : "view");
+  const toggleMode = () => setMode(prev => prev === "create" ? "view" : "create");
 
   return (
     <main className={styles.main}>
       <div className={`${styles.card} ${isVisualizing ? styles.isVisualizing : ""}`}>
+        
         {/* Face Criação */}
         <div className={`${styles.sideFace} ${styles.createFace}`}>
           <div className={styles.formCol}>
@@ -129,16 +108,17 @@ function MainContent() {
 
             <section className={styles.section}>
               <label className={styles.boxTitle}>Sua Senha</label>
-
               <div className={styles.inputWrapper}>
                 <input
                   type="text"
                   className={styles.input}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Digite ou use a dado..."
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (configError) setConfigError("");
+                  }}
+                  placeholder="Digite ou use o dado..."
                 />
-
                 <button
                   type="button"
                   className={styles.innerGenerateBtn}
@@ -154,21 +134,22 @@ function MainContent() {
                 <label className={styles.boxTitle}>
                   Customização <span className={styles.dynamicLabel}>{length} CARACTERES</span>
                 </label>
-
                 <div className={styles.checkboxGroup}>
                   {charsetOptions.map((opt) => (
                     <label key={opt.id}>
                       <input
                         type="checkbox"
                         checked={opt.checked}
-                        onChange={(e) => opt.set(e.target.checked)}
+                        onChange={(e) => {
+                          opt.set(e.target.checked);
+                          if (configError) setConfigError("");
+                        }}
                         className={styles.hiddenCheckbox}
                       />
                       <span className={styles.customCheck}>{opt.label}</span>
                     </label>
                   ))}
                 </div>
-
                 <div className={styles.controlRow}>
                   <input
                     type="range"
@@ -183,14 +164,12 @@ function MainContent() {
               </section>
             )}
 
+            {configError && <span className={styles.errorLabel}>{configError}</span>}
+
             <section className={styles.section}>
               <label className={styles.boxTitle}>
-                Destruição{" "}
-                <span className={styles.dynamicLabel}>
-                  {expiresValue} {expiresUnit}
-                </span>
+                Destruição <span className={styles.dynamicLabel}>{expiresValue} {expiresUnit}</span>
               </label>
-
               <div className={styles.pillGroup}>
                 {unitOptions.map((u) => (
                   <button
@@ -203,60 +182,35 @@ function MainContent() {
                   </button>
                 ))}
               </div>
-
               <div className={styles.controlRow}>
                 <input
-                  type="range"
-                  min={1}
-                  max={60}
+                  type="range" min={1} max={60}
                   value={expiresValue}
                   onChange={(e) => setExpiresValue(Number(e.target.value))}
                   className={styles.range}
                 />
                 <div className={styles.numberDisplay}>{expiresValue}</div>
               </div>
-
               <div className={styles.viewLimitBox}>
                 <div className={styles.viewLimitText}>
                   <span className={styles.limitTitle}>Limite de Acessos</span>
-                  <span className={styles.limitSub}>
-                    Quantidade de vezes que o link pode ser aberto
-                  </span>
+                  <span className={styles.limitSub}>Vezes que o link pode ser aberto</span>
                 </div>
-
                 <div className={styles.counterControl}>
-                  <button
-                    type="button"
-                    onClick={() => setViewLimit((p) => Math.max(1, p - 1))}
-                    className={styles.counterBtn}
-                  >
-                    -
-                  </button>
-
-                  <input
-                    type="number"
-                    value={viewLimit}
-                    readOnly
-                    className={styles.counterInput}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => setViewLimit((p) => p + 1)}
-                    className={styles.counterBtn}
-                  >
-                    +
-                  </button>
+                  <button type="button" onClick={() => setViewLimit((p) => Math.max(1, p - 1))} className={styles.counterBtn}>-</button>
+                  <input type="number" value={viewLimit} readOnly className={styles.counterInput} />
+                  <button type="button" onClick={() => setViewLimit((p) => p + 1)} className={styles.counterBtn}>+</button>
                 </div>
               </div>
             </section>
 
-            <button
-              className={styles.ctaButton}
-              onClick={handleSave}
-              disabled={isSubmitting || isButtonDisabled}
-            >
+            <button className={styles.ctaButton} onClick={handleSave} disabled={isSubmitting}>
               {isSubmitting ? "CRIANDO..." : "GERAR LINK SEGURO"}
+            </button>
+
+            {/* BOTÃO MOBILE AQUI */}
+            <button type="button" onClick={toggleMode} className={styles.mobileOnlyLink}>
+              Já tenho um token para visualizar
             </button>
           </div>
         </div>
@@ -265,10 +219,8 @@ function MainContent() {
         <div className={`${styles.sideFace} ${styles.viewFace}`}>
           <div className={styles.formColCenter}>
             <Image src="/logototvs.png" alt="TOTVS" width={160} height={60} priority />
-
             <section className={styles.section} style={{ width: "100%" }}>
               <label className={styles.boxTitle}>Token de Acesso</label>
-
               <input
                 className={styles.input}
                 placeholder="Insira o token ou cole a URL"
@@ -279,43 +231,31 @@ function MainContent() {
                 }}
                 onKeyDown={(e) => e.key === "Enter" && handleGoToToken()}
               />
-
-              {!!tokenError && (
-                <span
-                  style={{
-                    color: "#ef4444",
-                    fontSize: "12px",
-                    marginTop: "6px",
-                    display: "block",
-                  }}
-                >
-                  {tokenError}
-                </span>
-              )}
+              {tokenError && <span className={styles.errorLabel}>{tokenError}</span>}
             </section>
-
+            
             <button className={styles.ctaButton} onClick={handleGoToToken}>
               Visualizar Segredo →
             </button>
 
+            {/* BOTÃO MOBILE AQUI */}
+            <button type="button" onClick={toggleMode} className={styles.mobileOnlyLink}>
+              Quero gerar um novo link seguro
+            </button>
+
             <p className={styles.securityWarning}>
-              🔒 Sua conexão é privada. O conteúdo será automaticamente removido após atingir o tempo de validade ou o limite de acessos.
+              🔒 Sua conexão é privada. O conteúdo será removido após a validade ou limite.
             </p>
           </div>
         </div>
 
-        {/* Overlay */}
         <aside className={styles.overlay}>
           <div className={styles.overlayContent}>
             <Image src="/iconhomewhite.png" alt="Icon" width={90} height={90} />
             <h3 className={styles.rightTitle}>Privacidade Absoluta</h3>
-
             <p className={styles.rightDesc}>
-              {isVisualizing
-                ? "Deseja proteger um novo dado? Volte para criar um link criptografado."
-                : "Recebeu um link? Alterne para visualizar o conteúdo de forma segura."}
+              {isVisualizing ? "Deseja proteger um novo dado? Volte para criar." : "Recebeu um link? Alterne para visualizar."}
             </p>
-
             <button className={styles.switchButton} onClick={toggleMode}>
               {isVisualizing ? "QUERO GERAR" : "QUERO VISUALIZAR"}
             </button>
@@ -329,12 +269,8 @@ function MainContent() {
         expiresLabel={expiresLabel}
         viewLimit={viewLimit}
         onClose={() => setCreated(null)}
-        onCopy={async () => {
-          if (created?.url) await navigator.clipboard.writeText(created.url);
-        }}
-        onViewNow={() => {
-          if (created?.pwdId) router.push(`/visualizar/${encodeURIComponent(created.pwdId)}`);
-        }}
+        onCopy={async () => { if (created?.url) await navigator.clipboard.writeText(created.url); }}
+        onViewNow={() => { if (created?.pwdId) router.push(`/visualizar/${encodeURIComponent(created.pwdId)}`); }}
       />
     </main>
   );

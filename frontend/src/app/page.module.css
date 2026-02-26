@@ -5,19 +5,21 @@
   min-height: 100vh;
   background: radial-gradient(circle at top left, #f8fafc, #e2e8f0, #cbd5e1);
   font-family: 'Inter', sans-serif;
+  padding: 20px;
 }
 
 .card {
-  width: 1000px;
+  width: 100%;
+  max-width: 1000px;
   height: 660px;
   background: #ffffff;
   border-radius: 24px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
   position: relative;
   overflow: hidden;
+  transition: all 0.5s ease;
 }
 
-/* Base das faces Brancas */
 .sideFace {
   position: absolute;
   top: 0;
@@ -31,37 +33,13 @@
   box-sizing: border-box;
 }
 
-/* Lado de Criação (Ajuste aqui sem quebrar o outro) */
-.createFace {
-  left: 0;
-  opacity: 1;
-  z-index: 2;
-}
+.createFace { left: 0; opacity: 1; z-index: 2; }
+.viewFace { left: 40%; opacity: 0; z-index: 1; }
 
-/* Lado de Visualização (Independente) */
-.viewFace {
-  left: 40%; /* Posicionado para aparecer quando o azul desliza para a esquerda */
-  opacity: 0;
-  z-index: 1;
-}
+.isVisualizing .overlay { transform: translateX(-150%); }
+.isVisualizing .createFace { opacity: 0; transform: translateX(-40px); }
+.isVisualizing .viewFace { opacity: 1; z-index: 5; transform: translateX(0); }
 
-/* Lógica da Animação */
-.isVisualizing .overlay {
-  transform: translateX(-150%);
-}
-
-.isVisualizing .createFace {
-  opacity: 0;
-  transform: translateX(-40px);
-}
-
-.isVisualizing .viewFace {
-  opacity: 1;
-  z-index: 5;
-  transform: translateX(0);
-}
-
-/* Overlay Escuro */
 .overlay {
   position: absolute;
   top: 0;
@@ -77,50 +55,30 @@
   transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-.overlayContent {
-  text-align: center;
-  padding: 40px;
-}
-
-/* Formulário e Elementos */
-.formCol { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 24px; }
+.overlayContent { text-align: center; padding: 40px; width: 100%; }
+.formCol { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 20px; }
 .formColCenter { width: 100%; max-width: 380px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
 
-.mainHeader { display: flex; align-items: center; gap: 14px; }
 .mainHeader h2 { font-size: 26px; font-weight: 800; color: #0f172a; margin: 0; }
-.iconCircleSmall { background: #f1f5f9; padding: 10px; border-radius: 12px; }
-
 .section { display: flex; flex-direction: column; gap: 12px; }
 .boxTitle { font-weight: 700; font-size: 11px; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
 
 .inputWrapper { position: relative; width: 100%; }
-.input { width: 100%; padding: 16px; border-radius: 14px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 16px; outline: none; color: #1e293b; }
+.input { width: 100%; padding: 16px; border-radius: 14px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 16px; outline: none; color: #1e293b; box-sizing: border-box; }
 .input:focus { border-color: #0f172a; background: #fff; }
 
 .innerGenerateBtn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; cursor: pointer; }
 
-/* Checkboxes Estilizados */
 .checkboxGroup { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .customCheck { display: flex; align-items: center; justify-content: center; padding: 12px; background: #fff; border: 2px solid #f1f5f9; border-radius: 12px; font-size: 13px; font-weight: 700; color: #64748b; cursor: pointer; }
 .hiddenCheckbox { display: none; }
 .hiddenCheckbox:checked + .customCheck { background: #0f172a; color: white; border-color: #0f172a; }
 
-/* Sliders */
 .controlRow { display: grid; grid-template-columns: 1fr 60px; align-items: center; gap: 12px; background: #f8fafc; padding: 8px 16px; border-radius: 12px; border: 1px solid #f1f5f9; }
-.range { accent-color: #0f172a; }
+.range { accent-color: #0f172a; cursor: pointer; }
 .numberDisplay { text-align: center; font-weight: 800; color: #0f172a; }
 
-/* ESTILO MELHORADO PARA LIMITE DE ACESSOS */
-.viewLimitBox {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f8fafc;
-  padding: 16px;
-  border-radius: 16px;
-  border: 1px solid #f1f5f9;
-}
-
+.viewLimitBox { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 16px; border-radius: 16px; border: 1px solid #f1f5f9; }
 .viewLimitText { display: flex; flex-direction: column; }
 .limitTitle { font-weight: 800; font-size: 13px; color: #0f172a; }
 .limitSub { font-size: 10px; color: #94a3b8; }
@@ -129,7 +87,6 @@
 .counterBtn { border: none; background: transparent; width: 28px; height: 28px; cursor: pointer; font-weight: 800; color: #0f172a; }
 .counterInput { width: 30px; border: none; text-align: center; font-weight: 800; color: #0f172a; outline: none; }
 
-/* Botões e Pills */
 .pillGroup { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; }
 .pillBtn { flex: 1; padding: 8px; border: none; background: transparent; font-size: 11px; font-weight: 700; color: #64748b; cursor: pointer; }
 .pillBtnActive { background: #0f172a; color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -137,9 +94,52 @@
 .ctaButton { background: #0f172a; color: white; padding: 18px; border-radius: 16px; border: none; font-weight: 800; cursor: pointer; width: 100%; transition: 0.3s; }
 .ctaButton:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); }
 
+.errorLabel { color: #ef4444; font-size: 12px; font-weight: 600; margin-top: -8px; display: block; }
 .dynamicLabel { background: #e2e8f0; padding: 2px 8px; border-radius: 20px; color: #0f172a; font-size: 10px; font-weight: 800; }
 .securityWarning { font-size: 12px; color: #94a3b8; margin-top: 10px; line-height: 1.5; }
 .rightTitle { font-size: 26px; font-weight: 800; margin: 20px 0 10px; }
 .rightDesc { font-size: 14px; opacity: 0.8; margin-bottom: 30px; }
 .switchButton { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: white; padding: 12px 30px; border-radius: 12px; font-weight: 700; cursor: pointer; }
-.switchButton:hover { background: white; color: #0f172a; }
+
+.mobileOnlyLink {
+  display: none;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 10px;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+/* BREAKPOINT IPHONE 12 PRO / MOBILE */
+@media (max-width: 768px) {
+  .card { height: auto; background: transparent; box-shadow: none; overflow: visible; }
+  .overlay { display: none; }
+  
+  .sideFace {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 30px 15px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    left: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .viewFace { display: none; }
+  .isVisualizing .viewFace { display: flex; }
+  .isVisualizing .createFace { display: none; }
+
+  .mobileOnlyLink { display: block; }
+  .formColCenter { max-width: 100%; gap: 20px; }
+  .checkboxGroup { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .customCheck { padding: 12px 5px; font-size: 12px; }
+}

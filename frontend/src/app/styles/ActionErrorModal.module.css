@@ -15,15 +15,14 @@
   width: 100%;
   max-width: 400px;
   background: #ffffff;
-  border-radius: 12px; /* Arredondado conforme imagem */
-  overflow: hidden; /* Garante que o banner não escape das bordas */
+  border-radius: 12px; 
+  overflow: hidden; 
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   animation: scaleUp 0.3s ease-out;
 }
 
-/* Banner superior rosa/vermelho */
 .headerBanner {
-  background-color: #e96b72; /* Cor exata da imagem */
+  background-color: #e96b72; 
   height: 160px;
   display: flex;
   align-items: center;
@@ -55,7 +54,7 @@
 .title {
   font-size: 42px;
   font-weight: 600;
-  color: #4a5568; /* Cinza escuro da imagem */
+  color: #4a5568;
   margin-bottom: 15px;
   letter-spacing: -1px;
 }
@@ -67,7 +66,6 @@
   line-height: 1.4;
 }
 
-/* Botão Amarelo */
 .actionBtn {
   width: auto;
   min-width: 180px;
@@ -75,9 +73,9 @@
   font-size: 18px;
   font-weight: 600;
   color: #ffffff;
-  background-color: #f1b91d; /* Amarelo da imagem */
+  background-color: #f1b91d; 
   border: none;
-  border-radius: 30px; /* Botão bem arredondado */
+  border-radius: 30px; 
   cursor: pointer;
   transition: opacity 0.2s;
 }

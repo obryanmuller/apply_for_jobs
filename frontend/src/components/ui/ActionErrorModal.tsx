@@ -14,10 +14,7 @@ export function ActionErrorModal({ open, message, onClose }: ActionErrorModalPro
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        {/* Botão de fechar (X pequeno no canto) */}
         <button className={styles.closeBtn} onClick={onClose}>✕</button>
-
-        {/* Cabeçalho Vermelho com Ícone */}
         <div className={styles.headerBanner}>
           <div className={styles.iconCircle}>
             <span className={styles.iconX}>✕</span>

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import styles from "./Modal.module.css";
+import styles from "@/app/styles/Modal.module.css";
 
 export function Modal({
   open,

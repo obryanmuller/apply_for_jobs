@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./TokenCreatedModal.module.css";
+import styles from "@/app/styles/TokenCreatedModal.module.css";
 
 interface ModalProps {
   open: boolean;

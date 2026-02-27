@@ -1,6 +1,14 @@
+# Serverless build
+backend/.serverless/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
 node_modules/
-.next/
-dist/
-out/
+
+# Env
 .env
 .env.*

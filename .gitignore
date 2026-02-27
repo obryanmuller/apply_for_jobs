@@ -1,4 +1,6 @@
-/backend/node_modules
-/backend/venv
-/backend/.serverless
-/frontend/node_modules
+node_modules/
+.next/
+dist/
+out/
+.env
+.env.*

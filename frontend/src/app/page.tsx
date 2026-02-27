@@ -63,7 +63,7 @@ function MainContent() {
     if (!Number.isFinite(len) || !Number.isInteger(len)) return setConfigError("Tamanho inválido.");
     if (len < 8) return setConfigError("O tamanho mínimo para gerar é 8.");
     if (len > 128) return setConfigError("O tamanho máximo permitido é 128.");
-    return setConfigError("O tamanho máximo permitido é 128.");
+
     
     setConfigError("");
     setPassword(generatePassword({ useLetters, useDigits, useSymbols, length: len }));
@@ -85,7 +85,6 @@ function MainContent() {
       if (!Number.isFinite(len) || !Number.isInteger(len)) 
         return setConfigError("Tamanho inválido.");
       if (len < 8) return setConfigError("O tamanho mínimo para gerar é 8.");
-        if (len > 128) return setConfigError("O tamanho máximo permitido é 128.");
     }
 
     try {

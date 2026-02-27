@@ -1,0 +1,56 @@
+service: secure-password-api
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  environment:
+    TABLE_NAME: secure-secrets
+    ENCRYPTION_KEY: "_nQF7e7aQoiHjpBMYg99Gwm5_6dpfwnt7_BL4Y7c2Og="
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: arn:aws:dynamodb:us-east-1:*:table/secure-secrets
+
+functions:
+  createPwd:
+    handler: handlers.create_pwd.handler
+    events:
+      - httpApi:
+          path: /pwd
+          method: post
+
+  optionsPwd:
+    handler: handlers.options.handler
+    events:
+      - httpApi:
+          path: /pwd
+          method: options
+
+  getPwd:
+    handler: handlers.get_pwd.handler
+    events:
+      - httpApi:
+          path: /pwd/{pwdId}
+          method: get
+
+  health:
+    handler: handlers.health.handler
+    events:
+      - httpApi:
+          path: /health
+          method: get
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    useStaticCache: true
+    useDownloadCache: true

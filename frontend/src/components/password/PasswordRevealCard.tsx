@@ -1,7 +1,7 @@
 "use client";
 
 import { formatRemainingFromEpochSeconds } from "@/lib/utils/time";
-import styles from "./PasswordRevealCard.module.css";
+import styles from "@/app/styles/PasswordRevealCard.module.css";
 import { useState } from "react";
 
 export function PasswordRevealCard({ loading, error, data, onClose }: any) {
@@ -23,7 +23,7 @@ export function PasswordRevealCard({ loading, error, data, onClose }: any) {
           </div>
 
           <div className={styles.content}>
-            <header className={styles.passwordTitle}>Segredo Descriptografado</header>
+            <header className={styles.passwordTitle}>Senha Descriptografado</header>
 
             <div className={styles.passwordBox}>
               <code>{data.pwd}</code>
@@ -40,7 +40,7 @@ export function PasswordRevealCard({ loading, error, data, onClose }: any) {
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1" />
                 </svg>
               )}
-              {copied ? "Copiado!" : "Copiar Segredo"}
+              {copied ? "Copiado!" : "Copiar Senha"}
             </button>
 
             <div className={styles.metaGrid}>
@@ -68,23 +68,26 @@ export function PasswordRevealCard({ loading, error, data, onClose }: any) {
     return (
       <div className={styles.modalWrapper}>
         <div className={`${styles.shell} ${styles.appear}`}>
-          <div className={styles.topBar} style={{ backgroundColor: "#1e293b" }}>
-            <div className={styles.brandDot} style={{ background: "#f87171" }} />
+          <button className={styles.closeBtn} onClick={onClose}>✕</button>
+          
+          <div className={styles.errorHeaderBanner}>
+            <div className={styles.errorIconCircle}>
+              <span className={styles.errorIconX}>✕</span>
+            </div>
           </div>
 
           <div className={styles.content}>
-            <div className={styles.errorIcon}>⚠️</div>
-            <h2 style={{ color: "#0f172a", fontWeight: 800, marginBottom: 12 }}>Link Indisponível</h2>
-            <p style={{ color: "#64748b", marginBottom: 24, fontSize: "15px", lineHeight: "1.5" }}>{error}</p>
-            <button onClick={onClose} className={styles.copyButton}>
-              Voltar ao Início
+            <h2 className={styles.errorTitle}>Ooops!</h2>
+            <p className={styles.errorMessage}>{error}</p>
+            
+            <button onClick={onClose} className={styles.errorTryAgainButton}>
+              Tentar Novamente
             </button>
           </div>
         </div>
       </div>
     );
   }
-
   if (loading) {
     return (
       <div className={styles.modalWrapper}>

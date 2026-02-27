@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./ActionErrorModal.module.css";
+import styles from "@/app/styles/ActionErrorModal.module.css";
 
 interface ActionErrorModalProps {
   open: boolean;
@@ -14,26 +14,24 @@ export function ActionErrorModal({ open, message, onClose }: ActionErrorModalPro
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        {/* Botão de fechar igual ao padrão do sistema */}
-        <button className={styles.closeBtn} onClick={onClose}>
-          ✕
-        </button>
+        {/* Botão de fechar (X pequeno no canto) */}
+        <button className={styles.closeBtn} onClick={onClose}>✕</button>
 
-        <div className={styles.header}>
-          <div className={styles.iconContainer}>
-            <span className={styles.icon}>⚠️</span>
+        {/* Cabeçalho Vermelho com Ícone */}
+        <div className={styles.headerBanner}>
+          <div className={styles.iconCircle}>
+            <span className={styles.iconX}>✕</span>
           </div>
-          <h3 className={styles.title}>Falha na Operação</h3>
-          <p className={styles.subtitle}>Não foi possível processar sua solicitação</p>
         </div>
 
-        <div className={styles.errorContent}>
-           <p className={styles.message}>{message}</p>
+        <div className={styles.content}>
+          <h3 className={styles.title}>Ooops!</h3>
+          <p className={styles.message}>{message}</p>
+          
+          <button className={styles.actionBtn} onClick={onClose}>
+           Tentar Novamente
+          </button>
         </div>
-
-        <button className={styles.actionBtn} onClick={onClose}>
-          Tentar Novamente
-        </button>
       </div>
     </div>
   );

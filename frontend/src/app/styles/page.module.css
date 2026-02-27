@@ -8,7 +8,6 @@
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-
   font-family: "Inter", sans-serif;
   background: radial-gradient(circle at top left, #f8fafc, #e2e8f0, #cbd5e1);
 }
@@ -18,31 +17,26 @@
   width: 100%;
   max-width: 1000px;
   height: 660px;
-
   background: #ffffff;
   border-radius: 24px;
   overflow: hidden;
-
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
   transition: all 0.5s ease;
 }
 
 /* =========================================================
-   FACES (DESKTOP)
+   FACES (DESKTOP ANIMATION)
 ========================================================= */
 
 .sideFace {
   position: absolute;
   top: 0;
-
   width: 60%;
   height: 100%;
   padding: 40px 60px;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
-
   box-sizing: border-box;
   transition: all 0.6s cubic-bezier(0.77, 0, 0.175, 1);
 }
@@ -63,19 +57,38 @@
   position: absolute;
   top: 0;
   left: 60%;
-
   width: 40%;
   height: 100%;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: #ffffff;
   background: #0f172a;
   z-index: 10;
-
   transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.helpTrigger {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.helpTrigger:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
 .overlayContent {
@@ -106,7 +119,6 @@
 .formCol {
   width: 100%;
   max-width: 440px;
-
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -116,12 +128,10 @@
   width: 100%;
   max-width: 380px;
   margin: 0 auto;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 24px;
-
   text-align: center;
 }
 
@@ -130,6 +140,7 @@
   font-size: 26px;
   font-weight: 800;
   color: #0f172a;
+  letter-spacing: -0.5px;
 }
 
 .section {
@@ -142,12 +153,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-
   color: #0f172a;
 }
 
@@ -158,42 +167,53 @@
 .inputWrapper {
   position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .input {
   width: 100%;
-  padding: 16px;
-
+  padding: 16px 50px 16px 16px;
   font-size: 16px;
   color: #1e293b;
-
   background: #f8fafc;
   border: 2px solid #f1f5f9;
   border-radius: 14px;
   outline: none;
-
   box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
 .input:focus {
   background: #ffffff;
   border-color: #0f172a;
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.05);
 }
 
 .innerGenerateBtn {
   position: absolute;
+  right: 8px;
   top: 50%;
-  right: 10px;
-
-  width: 34px;
-  height: 34px;
-
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-
-  cursor: pointer;
   transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.innerGenerateBtn:hover {
+  background: #f1f5f9;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.innerGenerateBtn:active {
+  transform: translateY(-50%) scale(0.95);
 }
 
 /* =========================================================
@@ -203,7 +223,7 @@
 .checkboxGroup {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 10px;
 }
 
 .hiddenCheckbox {
@@ -214,18 +234,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
-  padding: 12px;
-
-  font-size: 13px;
+  padding: 12px 8px;
+  font-size: 12px;
   font-weight: 700;
   color: #64748b;
-
   background: #ffffff;
   border: 2px solid #f1f5f9;
   border-radius: 12px;
-
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .hiddenCheckbox:checked + .customCheck {
@@ -243,9 +260,7 @@
   grid-template-columns: 1fr 60px;
   align-items: center;
   gap: 12px;
-
   padding: 8px 16px;
-
   background: #f8fafc;
   border: 1px solid #f1f5f9;
   border-radius: 12px;
@@ -254,48 +269,31 @@
 .range {
   accent-color: #0f172a;
   cursor: pointer;
+  height: 6px;
 }
 
 .numberInput {
   width: 60px;
-  padding: 6px 0;
-
+  padding: 8px 0;
   font-size: 14px;
   font-weight: 800;
   text-align: center;
   color: #0f172a;
-
   background: #ffffff;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
   outline: none;
-
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
-}
-
-.numberInput:focus {
-  border-color: #0f172a;
-}
-
-.numberInput::-webkit-inner-spin-button,
-.numberInput::-webkit-outer-spin-button {
-  margin: 0;
-  -webkit-appearance: none;
 }
 
 /* =========================================================
-   VIEW LIMIT
+   VIEW LIMIT & COUNTER
 ========================================================= */
 
 .viewLimitBox {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   padding: 16px;
-
   background: #f8fafc;
   border: 1px solid #f1f5f9;
   border-radius: 16px;
@@ -307,8 +305,13 @@
 }
 
 .limitTitle {
-  font-size: 13px;
-  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   color: #0f172a;
 }
 
@@ -317,12 +320,17 @@
   color: #94a3b8;
 }
 
+.securityWarning{
+  font-size: 15px;
+  color: #94a3b8;
+  font-size: 11px;
+
+}
+
 .counterControl {
   display: flex;
   align-items: center;
-
   padding: 4px;
-
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
@@ -331,69 +339,50 @@
 .counterBtn {
   width: 28px;
   height: 28px;
-
   border: none;
   background: transparent;
-
   font-weight: 800;
   color: #0f172a;
-
   cursor: pointer;
 }
 
 .counterInput {
-  width: 40px;
-
+  width: 35px;
   text-align: center;
   font-weight: 800;
   color: #0f172a;
-
   border: none;
   outline: none;
   background: transparent;
-
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
-}
-
-.counterInput::-webkit-inner-spin-button,
-.counterInput::-webkit-outer-spin-button {
-  margin: 0;
-  -webkit-appearance: none;
 }
 
 /* =========================================================
-   PILLS (TIME BUTTONS)
+   PILLS (TIME)
 ========================================================= */
 
 .pillGroup {
   display: flex;
   padding: 4px;
-
   background: #f1f5f9;
   border-radius: 12px;
 }
 
 .pillBtn {
   flex: 1;
-  padding: 8px;
-
+  padding: 10px;
   font-size: 11px;
   font-weight: 700;
   color: #64748b;
-
   background: transparent;
   border: none;
-
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .pillBtnActive {
   background: #0f172a;
   color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* =========================================================
@@ -403,40 +392,34 @@
 .ctaButton {
   width: 100%;
   padding: 18px;
-
   font-weight: 800;
   color: #ffffff;
-
   background: #0f172a;
   border: none;
   border-radius: 16px;
-
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
-.ctaButton:hover {
+.ctaButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.2);
 }
 
 .ctaButton:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
 .switchButton {
   padding: 12px 30px;
-
   font-weight: 700;
   color: #ffffff;
-
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .switchButton:hover {
@@ -445,17 +428,15 @@
 }
 
 /* =========================================================
-   LABELS & MESSAGES
+   LABELS & ALERTS
 ========================================================= */
 
 .errorLabel {
   display: block;
-  margin-top: -8px;
-
   font-size: 12px;
   font-weight: 600;
   color: #ef4444;
-
+  margin-top: -5px;
   animation: shake 0.4s ease-in-out;
 }
 
@@ -467,72 +448,38 @@
 
 .dynamicLabel {
   padding: 2px 8px;
-
   font-size: 10px;
   font-weight: 800;
   color: #0f172a;
-
   background: #e2e8f0;
   border-radius: 20px;
 }
 
-.securityWarning {
-  margin-top: 10px;
-
-  font-size: 12px;
-  line-height: 1.5;
-  color: #94a3b8;
-}
-
-.rightTitle {
-  margin: 20px 0 10px;
-
-  font-size: 26px;
-  font-weight: 800;
-}
-
-.rightDesc {
-  margin-bottom: 30px;
-
-  font-size: 14px;
-  opacity: 0.8;
-}
-
 /* =========================================================
-   MOBILE
+   MOBILE RESPONSIVE
 ========================================================= */
 
 .mobileOnlyLink {
   display: none;
-
   width: 100%;
-  margin-top: 20px;
+  margin-top: 10px;
   padding: 10px;
-
   font-size: 13px;
   font-weight: 600;
   text-align: center;
-  text-decoration: underline;
-
   background: none;
   border: none;
   color: #0f172a;
-
+  text-decoration: underline;
   cursor: pointer;
 }
 
 @media (max-width: 768px) {
-  .main {
-    align-items: center;
-    padding: 10px;
-  }
-
   .card {
     height: auto;
     background: transparent;
     box-shadow: none;
     overflow: visible;
-    margin: auto;
   }
 
   .overlay {
@@ -543,12 +490,10 @@
     position: relative;
     width: 100%;
     height: auto;
-    padding: 30px 15px;
-
+    padding: 30px 20px;
     background: #ffffff;
     border-radius: 24px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-
     left: 0 !important;
     opacity: 1 !important;
     transform: none !important;
@@ -570,17 +515,12 @@
     display: block;
   }
 
-  .formColCenter {
-    max-width: 100%;
-    gap: 20px;
+  .helpTrigger {
+    top: 20px;
+    right: 20px;
+    padding: 8px;
   }
-
-  .checkboxGroup {
-    gap: 8px;
-  }
-
-  .customCheck {
-    padding: 12px 5px;
-    font-size: 12px;
+  .helpTrigger span {
+    display: none;
   }
 }
